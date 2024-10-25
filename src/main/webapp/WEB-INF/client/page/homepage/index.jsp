@@ -10,18 +10,19 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
                 <title>Dashboard</title>
                 <!-- inject:css -->
-                <link rel="stylesheet" href="../css/style.css">
-                <link rel="stylesheet" href="../css/custom.css">
+                <%-- <link rel="stylesheet" href="../css/style.css">--%>
+                    <%-- <link rel="stylesheet" href="../css/custom.css">--%>
 
-                <!-- endinject -->
-                <link rel="shortcut icon" href="/images/favicon.png" />
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-                    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-                    crossorigin="anonymous">
-                <!-- Bootstrap Icons -->
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+                        <!-- endinject -->
+                        <link rel="shortcut icon" href="/images/favicon.png" />
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+                            rel="stylesheet"
+                            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+                            crossorigin="anonymous">
+                        <!-- Bootstrap Icons -->
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+                            rel="stylesheet">
+                        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
             </head>
 
@@ -37,13 +38,14 @@
                             <jsp:include page="../layout/sidebar.jsp" />
                         </c:if>
                         <div class="main-panel">
-                            <div class="content-wrapper" style="margin-left: 260px;">
+                            <div class="content-wrapper">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="home-tab">
                                             <!-- content-here -->
                                             <div class="container py-4">
-                                                <div class="row" data-masonry='{"percentPosition": true }'>
+                                                <div class="row d-flex justify-content-center"
+                                                    data-masonry='{"percentPosition": true }'>
                                                     <!-- Repeat this column structure for more items -->
                                                     <c:forEach items="${listPost}" var="post">
                                                         <div></div>
@@ -58,16 +60,14 @@
                                                                         <div class="d-flex align-items-center">
                                                                             <button
                                                                                 style="background: none; border: none; cursor: pointer;"
-                                                                                onclick='likePost("${post.id}")'>
+                                                                                onclick="handleLike()">
                                                                                 <img src="/images/dashboard/8324235_ui_essential_app_like_icon.png"
                                                                                     width="30px" height="30px"
-                                                                                    alt="Like" class="btn-like like"
-                                                                                    id="${post.id}">
+                                                                                    alt="Like" class="btn-like like">
                                                                             </button>
                                                                             <h5
                                                                                 style="margin-top: 10px; margin-left: 10px;">
-                                                                                ${post.liked}
-                                                                            </h5>
+                                                                                ${post.liked}</h5>
                                                                         </div>
                                                                         <button class="btn btn-outline-secondary btn-sm"
                                                                             onclick="downloadImg()">
@@ -82,14 +82,14 @@
                                                 </div>
                                             </div>
                                             <!-- popup form -->
-                                            <div class="container py-4 popup-form" id="popupForm">
-                                                <span class="close-btn" id="closePopupBtn"
-                                                    style="font-size: 50px;">&times;</span>
-                                                <div class="row">
-                                                    <div class="col-md-8 col-sm-8">
-                                                        <h3 class="my-4">New Post</h3>
-                                                        <hr />
-                                                        <form action="/">
+                                            <div class="modal" id="CreatePostModal" tabindex="-1"
+                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h3 class="my-4 model-title">Create Post</h3>
+                                                        </div>
+                                                        <div class="modal-body">
                                                             <div class="row mb-3">
                                                                 <label for="title"
                                                                     class="col-sm-3 col-form-label">Title:</label>
@@ -114,14 +114,13 @@
                                                                         Upload Picture
                                                                     </button>
                                                                 </div>
-                                                                <div class="d-grid gap-2">
-                                                                    <button type="submit" name="" id=""
-                                                                        class="btn btn-primary">
-                                                                        Post
-                                                                    </button>
-                                                                </div>
                                                             </div>
-                                                        </form>
+                                                            <div class="d-grid gap-2">
+                                                                <button type="button" name="" id=""
+                                                                    class="btn btn-primary">Post
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -134,55 +133,34 @@
                         </div>
                     </div>
                 </div>
+
+                <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+                    integrity="sha384-tsQFqpERiu9W1NUMXXfO5pLnAM6ScJS/6aINHpqlnqu8qZWjW0k6ujUib3WTOE6s"
+                    crossorigin="anonymous"></script>
+
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
+                    crossorigin="anonymous"></script>
+
                 <script src="/js/custom.js"></script>
-                <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-                    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-                    crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
-                    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-                    crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
-                    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+                    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
                     crossorigin="anonymous"></script>
                 <!-- End custom js for this page-->
                 <script>
-                    function likePost(postId) {
-                        const likeBtn = document.getElementById(postId);
-                        const likeCount = likeBtn.parentElement.nextElementSibling;
-                        let count = parseInt(likeCount.textContent);
-                        const liked = likeBtn.classList.contains("like");
-                        console.log('/likePost?id=' + postId + '&like=' + liked);
-                        fetch('/likePost?id=' + postId + '&like=' + liked, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                if (data.success) {
-                                    if (liked) {
-                                        likeBtn.src = "/images/dashboard/8324235_ui_essential_app_liked_icon.png";
-                                        likeBtn.classList.remove("like");
-                                        likeBtn.classList.add("liked");
-                                        likeCount.textContent = count + 1;
-                                    } else {
-                                        likeBtn.src = "/images/dashboard/8324235_ui_essential_app_like_icon.png";
-                                        likeBtn.classList.add("like");
-                                        likeBtn.classList.remove("liked");
-                                        likeCount.textContent = count - 1;
-                                    }
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
+                    function handleLike() {
+                        var like = document.querySelector('.btn-like');
+                        if (like.classList.contains('liked')) {
+                            like.src = "/images/dashboard/8324235_ui_essential_app_like_icon.png";
+                            like.classList.remove('liked');
+                            like.classList.add('like');
+                        } else {
+                            like.src = "/images/dashboard/8324235_ui_essential_app_liked_icon.png";
+                            like.classList.remove('like');
+                            like.classList.add('liked');
+                        }
                     }
+
                     // JavaScript to handle popup
                     const openPopupBtn = document.getElementById("openPopupBtn");
                     const popupForm = document.getElementById("popupForm");

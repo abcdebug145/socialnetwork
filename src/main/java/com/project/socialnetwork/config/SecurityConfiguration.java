@@ -63,6 +63,8 @@ public class SecurityConfiguration {
 				.logout(logout -> logout.deleteCookies("JSESSIONID").invalidateHttpSession(true))
 				.formLogin(formLogin -> formLogin
 						.loginPage("/login")
+						.loginProcessingUrl("/login")
+						.defaultSuccessUrl("/", true)
 						.failureUrl("/login?error")
 						.permitAll());
 		// .exceptionHandling(ex -> ex
