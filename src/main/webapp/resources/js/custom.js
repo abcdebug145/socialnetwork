@@ -1,5 +1,5 @@
-$(document).ready(function() {
-    $('.btn-change-status').click(function(event) {
+$(document).ready(function () {
+    $('.btn-change-status').click(function (event) {
         alert("Change status");
 
         var selectedId = $(this).attr("id-account");
@@ -10,7 +10,7 @@ $(document).ready(function() {
         $.ajax({
             url: '/admin/api-changeStatus-account?id=' + selectedId + '&currStatus=' + currStatus,
             type: 'PUT',
-            success: function() {
+            success: function () {
                 if (currStatus == 1) {
                     currSpan.html('<span style="color: red; font-size: 30px;" data-bs-toggle="tooltip" title="Account is banned">●</span>');
                     currBtn.html('<a href="/admin/accounts/account-details?id=' + selectedId + '" type="button" style="width: 95px;" class="btn btn-success">View</a>' +
@@ -27,4 +27,24 @@ $(document).ready(function() {
             }
         });
     });
+
+    // $('.btn-like').click(function (event) {
+    //     var postId = $(this).attr("data-post-id");
+    //     var likeCountElem = $(this).closest('.post').find('.like-count');
+    //     var likeCount = parseInt(likeCountElem.text());
+
+    //     $.ajax({
+    //         url: '/api/like-post?id=' + postId,
+    //         type: 'POST',
+    //         success: function (response) {
+    //             if (response.liked) {
+    //                 likeCountElem.text(likeCount + 1);
+    //                 $(this).addClass('liked');
+    //             } else {
+    //                 likeCountElem.text(likeCount - 1);
+    //                 $(this).removeClass('liked');
+    //             }
+    //         }.bind(this)
+    //     });
+    // });
 });

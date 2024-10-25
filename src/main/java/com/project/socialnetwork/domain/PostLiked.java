@@ -3,14 +3,12 @@ package com.project.socialnetwork.domain;
 import java.util.List;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,37 +17,23 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "accounts")
+@Table(name = "posts")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+public class PostLiked {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
-    private String password;
+    @ManyToMany
+    @JoinTable(name = "account_post_liked", joinColumns = @JoinColumn(name = "post_liked_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
+    private List<Account> accounts;
 
-    private String fullName;
-    private String address;
-    private String email;
-    private String avatar;
-
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
+    @ManyToMany
+    @JoinTable(name = "account_post_liked", joinColumns = @JoinColumn(name = "post_liked_id"), inverseJoinColumns = @JoinColumn(name = "post_id"))
     private List<Post> posts;
-
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private AccountStatus status;
-
-    @ManyToMany(mappedBy = "accounts")
-    private List<PostLiked> postLikeds;
 }

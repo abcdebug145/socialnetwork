@@ -7,14 +7,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.project.socialnetwork.domain.Account;
+import com.project.socialnetwork.domain.Post;
 import com.project.socialnetwork.repository.AccountRepository;
+import com.project.socialnetwork.repository.PostLikedRepository;
 
 @Service
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final PostLikedRepository postLikedRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(AccountRepository accountRepository, PostLikedRepository postLikedRepository) {
         this.accountRepository = accountRepository;
+        this.postLikedRepository = postLikedRepository;
     }
 
     public Account saveAccount(Account account) {
@@ -58,4 +62,7 @@ public class AccountService {
         return (long) Math.ceil(accountRepository.count() / 20f);
     }
 
+    public List<Post> getPostLiked(Long accountId) {
+        return postLikedRepository.findAllByAccounts_Id(accountId);
+    }
 }

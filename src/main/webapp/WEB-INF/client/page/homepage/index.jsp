@@ -29,11 +29,15 @@
 
             <body class="with-welcome-text">
                 <div class="container-scroller">
-                    <jsp:include page="../layout/navbar.jsp" />
+                    <c:if test="${empty pageContext.request.userPrincipal}">
+                        <jsp:include page="../layout/navbar.jsp" />
+                    </c:if>
                     <div class="container-fluid page-body-wrapper">
-                        <jsp:include page="../layout/sidebar.jsp" />
+                        <c:if test="${not empty pageContext.request.userPrincipal}">
+                            <jsp:include page="../layout/sidebar.jsp" />
+                        </c:if>
                         <div class="main-panel">
-                            <div class="content-wrapper">
+                            <div class="content-wrapper" style="margin-left: 260px;">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="home-tab">
@@ -54,14 +58,16 @@
                                                                         <div class="d-flex align-items-center">
                                                                             <button
                                                                                 style="background: none; border: none; cursor: pointer;"
-                                                                                onclick="handleLike()">
+                                                                                onclick='likePost("${post.id}")'>
                                                                                 <img src="/images/dashboard/8324235_ui_essential_app_like_icon.png"
                                                                                     width="30px" height="30px"
-                                                                                    alt="Like" class="btn-like like">
+                                                                                    alt="Like" class="btn-like like"
+                                                                                    id="${post.id}">
                                                                             </button>
                                                                             <h5
                                                                                 style="margin-top: 10px; margin-left: 10px;">
-                                                                                ${post.liked}</h5>
+                                                                                ${post.liked}
+                                                                            </h5>
                                                                         </div>
                                                                         <button class="btn btn-outline-secondary btn-sm"
                                                                             onclick="downloadImg()">
@@ -77,35 +83,45 @@
                                             </div>
                                             <!-- popup form -->
                                             <div class="container py-4 popup-form" id="popupForm">
-                                                <span class="close-btn" id="closePopupBtn" style="font-size: 50px;">&times;</span>
+                                                <span class="close-btn" id="closePopupBtn"
+                                                    style="font-size: 50px;">&times;</span>
                                                 <div class="row">
                                                     <div class="col-md-8 col-sm-8">
-                                                        <h3 class="my-4">Create Post</h3>
+                                                        <h3 class="my-4">New Post</h3>
                                                         <hr />
-                                                        <div class="row mb-3">
-                                                            <label for="title" class="col-sm-3 col-form-label">Title:</label>
-                                                            <div class="col-sm-9">
-                                                                <input type="text" class="form-control" id="title" />
+                                                        <form action="/">
+                                                            <div class="row mb-3">
+                                                                <label for="title"
+                                                                    class="col-sm-3 col-form-label">Title:</label>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" class="form-control"
+                                                                        id="title" />
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <label for="content" class="col-sm-3 col-form-label">Picture:</label>
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <img src="" id="postPicture" />
-                                                            <div class="col-sm-9">
-                                                                <input type="file" id="fileChooser" onchange="verifyFileUpload(this)" style="display: none" />
-                                                                <button class="btn btn-outline-primary my-3" type="button"
-                                                                    onclick="document.querySelector('#fileChooser').click()">
-                                                                    Upload Picture
-                                                                </button>
+                                                            <div class="row mb-3">
+                                                                <label for="content"
+                                                                    class="col-sm-3 col-form-label">Picture:</label>
                                                             </div>
-                                                            <div class="d-grid gap-2">
-                                                                <button type="button" name="" id="" class="btn btn-primary">
-                                                                    Post
-                                                                </button>
+                                                            <div class="row mb-3">
+                                                                <img src="" id="postPicture" />
+                                                                <div class="col-sm-9">
+                                                                    <input type="file" id="fileChooser"
+                                                                        onchange="verifyFileUpload(this)"
+                                                                        style="display: none" />
+                                                                    <button class="btn btn-outline-primary my-3"
+                                                                        type="button"
+                                                                        onclick="document.querySelector('#fileChooser').click()">
+                                                                        Upload Picture
+                                                                    </button>
+                                                                </div>
+                                                                <div class="d-grid gap-2">
+                                                                    <button type="submit" name="" id=""
+                                                                        class="btn btn-primary">
+                                                                        Post
+                                                                    </button>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -118,10 +134,6 @@
                         </div>
                     </div>
                 </div>
-
-                <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
-                    crossorigin="anonymous"></script>
                 <script src="/js/custom.js"></script>
                 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
                     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -134,18 +146,42 @@
                     crossorigin="anonymous"></script>
                 <!-- End custom js for this page-->
                 <script>
-                    function handleLike() {
-                        var like = document.querySelector('.btn-like');
-                        if (like.classList.contains('liked')) {
-                            like.src = "/images/dashboard/8324235_ui_essential_app_like_icon.png";
-                            like.classList.remove('liked');
-                            like.classList.add('like');
-                        }
-                        else {
-                            like.src = "/images/dashboard/8324235_ui_essential_app_liked_icon.png";
-                            like.classList.remove('like');
-                            like.classList.add('liked');
-                        }
+                    function likePost(postId) {
+                        const likeBtn = document.getElementById(postId);
+                        const likeCount = likeBtn.parentElement.nextElementSibling;
+                        let count = parseInt(likeCount.textContent);
+                        const liked = likeBtn.classList.contains("like");
+                        console.log('/likePost?id=' + postId + '&like=' + liked);
+                        fetch('/likePost?id=' + postId + '&like=' + liked, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    if (liked) {
+                                        likeBtn.src = "/images/dashboard/8324235_ui_essential_app_liked_icon.png";
+                                        likeBtn.classList.remove("like");
+                                        likeBtn.classList.add("liked");
+                                        likeCount.textContent = count + 1;
+                                    } else {
+                                        likeBtn.src = "/images/dashboard/8324235_ui_essential_app_like_icon.png";
+                                        likeBtn.classList.add("like");
+                                        likeBtn.classList.remove("liked");
+                                        likeCount.textContent = count - 1;
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
                     }
                     // JavaScript to handle popup
                     const openPopupBtn = document.getElementById("openPopupBtn");

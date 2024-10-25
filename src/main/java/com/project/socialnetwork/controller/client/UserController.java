@@ -8,9 +8,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.project.socialnetwork.domain.Account;
+import com.project.socialnetwork.domain.Post;
 import com.project.socialnetwork.service.AccountService;
 import com.project.socialnetwork.service.RoleService;
 import com.project.socialnetwork.service.StatusService;
+import com.project.socialnetwork.service.UploadService;
+
+import jakarta.servlet.annotation.MultipartConfig;
+
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 @Controller
 public class UserController {
@@ -54,10 +63,5 @@ public class UserController {
         accountService.saveAccount(account);
         return "redirect:/login";
     }
-
-    @GetMapping("/profile/edit-profile")
-    public String getEditProfilePage(Model model) {
-        model.addAttribute("editAccount", new Account());
-        return "client/page/user/edit-profile";
-    }
+    
 }

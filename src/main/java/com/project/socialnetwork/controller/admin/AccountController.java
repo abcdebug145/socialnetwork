@@ -67,7 +67,8 @@ class AccountAPI {
     private final RoleService roleService;
     private final StatusService statusService;
 
-    public AccountAPI(AccountService accountService, RoleService roleService, AccountRepository accountRepository,
+    public AccountAPI(AccountService accountService, RoleService roleService,
+            AccountRepository accountRepository,
             StatusService statusService) {
         this.accountService = accountService;
         this.roleService = roleService;
