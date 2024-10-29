@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.project.socialnetwork.domain.Account;
-import com.project.socialnetwork.domain.Post;
+import com.project.socialnetwork.domain.PostLiked;
 import com.project.socialnetwork.repository.AccountRepository;
 import com.project.socialnetwork.repository.PostLikedRepository;
 
@@ -62,7 +62,7 @@ public class AccountService {
         return (long) Math.ceil(accountRepository.count() / 20f);
     }
 
-    public List<Post> getPostLiked(Long accountId) {
-        return postLikedRepository.findAllByAccounts_Id(accountId);
+    public List<PostLiked> getPostsLiked(Long accountId) {
+        return postLikedRepository.findByAccount_Id(accountId);
     }
 }

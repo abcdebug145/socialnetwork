@@ -38,7 +38,7 @@
 }
 
 .content-wrapper {
-    margin-left: 240px;
+    /* margin-left: 240px; */
     /* padding-left: 70px; */
     /* Move content to the right to make space for sidebar */
     display: flex;

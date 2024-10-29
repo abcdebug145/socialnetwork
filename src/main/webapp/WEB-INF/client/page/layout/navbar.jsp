@@ -68,6 +68,7 @@
                     </div>
                 </div>
             </nav>
+            <!-- form login -->
             <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -80,12 +81,11 @@
                                 <p class="text-center">Please login to your account</p>
 
                                 <!-- Error and logout notifications -->
-                                <c:if test="${param.error != null}">
-                                    <div class="alert alert-danger text-center my-2">Invalid email or password.</div>
-                                </c:if>
-                                <c:if test="${param.logout != null}">
-                                    <div class="alert alert-success text-center my-2">Logout successful.</div>
-                                </c:if>
+                                <div id="loginError" class="alert-danger text-center my-2"
+                                    style="display: none; color: red; font-size: 16px">
+                                </div>
+                                <div id="logoutSuccess" class="alert alert-success text-center my-2"
+                                    style="display: none;"></div>
 
                                 <!-- Username input -->
                                 <div class="mb-3">
@@ -106,7 +106,7 @@
 
                                 <!-- Login button -->
                                 <div class="d-grid mb-3">
-                                    <button type="submit" class="btn btn-dark">Log in</button>
+                                    <button type="button" class="btn btn-dark" onclick="login()">Log in</button>
                                 </div>
 
                                 <!-- Forgot password -->
@@ -136,5 +136,35 @@
                     }
                     object.classList.add("active");
                     object.style.fontWeight = 600;
+                }
+
+                function login() {
+                    const username = document.getElementById('form2Example11').value;
+                    const password = document.getElementById('form2Example22').value;
+                    const csrfParameterName = '${_csrf.parameterName}';
+                    const csrfToken = '${_csrf.token}';
+
+                    fetch('/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            username: username,
+                            password: password,
+                            [csrfParameterName]: csrfToken
+                        })
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                window.location.reload();
+                            } else {
+                                return response.text().then(text => { throw new Error(text); });
+                            }
+                        })
+                        .catch(error => {
+                            document.getElementById('loginError').style.display = 'block';
+                            document.getElementById('loginError').innerText = 'Invalid email or password.';
+                        });
                 }
             </script>

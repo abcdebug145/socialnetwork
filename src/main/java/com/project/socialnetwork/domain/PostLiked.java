@@ -1,6 +1,6 @@
 package com.project.socialnetwork.domain;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "posts")
+@Table(name = "posts_liked")
 @Getter
 @Setter
 @ToString
@@ -29,11 +30,11 @@ public class PostLiked {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
-    @JoinTable(name = "account_post_liked", joinColumns = @JoinColumn(name = "post_liked_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
-    private List<Account> accounts;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
 
-    @ManyToMany
-    @JoinTable(name = "account_post_liked", joinColumns = @JoinColumn(name = "post_liked_id"), inverseJoinColumns = @JoinColumn(name = "post_id"))
-    private List<Post> posts;
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
 }

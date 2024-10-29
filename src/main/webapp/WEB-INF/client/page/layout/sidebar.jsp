@@ -9,7 +9,7 @@
                             <a href="/" class="list-group-item list-group-item-action ">
                                 <i class="material-icons" style="font-size: 42px;">&#xe88a;</i>
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action ">
+                            <a href="/profile/edit-profile" class="list-group-item list-group-item-action ">
                                 <i class="material-icons" style="font-size: 40px;">&#xe853;</i>
                             </a>
                             <a class="list-group-item list-group-item-action " data-bs-toggle="modal"

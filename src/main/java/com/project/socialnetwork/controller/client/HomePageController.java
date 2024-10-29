@@ -1,5 +1,6 @@
 package com.project.socialnetwork.controller.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.project.socialnetwork.domain.Account;
 import com.project.socialnetwork.domain.Post;
+import com.project.socialnetwork.domain.PostLiked;
+import com.project.socialnetwork.service.AccountService;
 import com.project.socialnetwork.service.PostService;
 import com.project.socialnetwork.service.UploadService;
 
@@ -27,19 +30,28 @@ public class HomePageController {
 
     private final PostService postService;
     private final UploadService uploadService;
+    private final AccountService accountService;
 
-    public HomePageController(PostService postService, UploadService uploadService) {
+    public HomePageController(PostService postService, UploadService uploadService, AccountService accountService) {
         this.postService = postService;
         this.uploadService = uploadService;
+        this.accountService = accountService;
     }
 
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request) {
+        Post newPost = new Post();
         List<Post> posts = postService.getAllPosts();
+        List<PostLiked> postLiked = new ArrayList<PostLiked>();
         HttpSession session = request.getSession();
-        System.out.println("USERNAME: " + session.getAttribute("username"));
-        System.out.println("ID: " + session.getAttribute("id"));
+        if (session.getAttribute("username") != null) {
+            String username = session.getAttribute("username").toString();
+            Account currUser = accountService.findByEmail(username);
+            postLiked = accountService.getPostsLiked(currUser.getId());
+        }
         model.addAttribute("listPost", posts);
+        model.addAttribute("newPost", newPost);
+        model.addAttribute("postLiked", postLiked);
         return "client/page/homepage/index";
     }
 
@@ -50,10 +62,15 @@ public class HomePageController {
     }
 
     @PostMapping("/create-post")
-    public String createPost(@ModelAttribute("newPost") Post post, @RequestParam("postFile") MultipartFile file) {
+    public String createPost(@ModelAttribute("newPost") Post post, @RequestParam("postFile") MultipartFile file,
+            HttpServletRequest request) {
         String imgPath = uploadService.saveUploadFile(file, "post");
         post.setImage(imgPath);
-        postService.savePost(post);
+        post.setLikeCount(0);
+        HttpSession session = request.getSession();
+        String username = session.getAttribute("username").toString();
+        Account currAccount = accountService.findByEmail(username);
+        postService.createPost(currAccount, post);
         return "redirect:/";
     }
 
@@ -69,42 +86,29 @@ public class HomePageController {
     }
 }
 
-// @Controller
-// class CustomErrorController implements ErrorController {
-
-// @RequestMapping("/error")
-// public String handleError() {
-// // Chuyển hướng đến trang 404
-// return "redirect:/page-not-found";
-// }
-
-// }
-
 @RestController
 class APIController {
     private final PostService postService;
-    private final UploadService uploadService;
+    private final AccountService accountService;
 
-    public APIController(PostService postService, UploadService uploadService) {
+    public APIController(PostService postService, AccountService accountService) {
         this.postService = postService;
-        this.uploadService = uploadService;
+        this.accountService = accountService;
     }
 
     @PostMapping("/likePost")
     public ResponseEntity<Map<String, Object>> likePost(@RequestParam("id") Long postId,
-            @RequestParam("like") boolean like) {
-        System.out.println("like: " + like);
+            @RequestParam("like") boolean like, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Account currAccount = accountService.findByEmail(session.getAttribute("username").toString());
         Post post = postService.getPostById(postId);
-        if (like) {
-            post.setLiked(post.getLiked() + 1);
-        } else {
-            post.setLiked(post.getLiked() - 1);
-        }
+        postService.likePost(post, currAccount);
+        post.setLikeCount(post.getPostLikeds().size());
         postService.savePost(post);
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
-        response.put("likeCount", post.getLiked());
+        response.put("likeCount", post.getLikeCount());
         return ResponseEntity.ok(response);
     }
 }
