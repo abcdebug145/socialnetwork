@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+src/main/webapp/resources/images/post/
+src/main/resources/application.properties
