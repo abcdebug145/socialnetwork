@@ -55,12 +55,6 @@ public class HomePageController {
         return "client/page/homepage/index";
     }
 
-    @GetMapping("/create-post")
-    public String getCreatePostPage(Model model) {
-        model.addAttribute("newPost", new Post());
-        return "client/page/homepage/create-post";
-    }
-
     @PostMapping("/create-post")
     public String createPost(@ModelAttribute("newPost") Post post, @RequestParam("postFile") MultipartFile file,
             HttpServletRequest request) {
@@ -111,4 +105,15 @@ class APIController {
         response.put("likeCount", post.getLikeCount());
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/deletePost")
+    public ResponseEntity<Map<String, Object>> deletePost(@RequestParam("id") Long postId) {
+        Post post = postService.getPostById(postId);
+        postService.savePost(post);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        return ResponseEntity.ok(response);
+    }
+
 }
