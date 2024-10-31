@@ -63,7 +63,10 @@ public class SecurityConfiguration {
 						.invalidSessionUrl("/logout?expired")
 						.maximumSessions(1)
 						.maxSessionsPreventsLogin(false))
-				.logout(logout -> logout.deleteCookies("JSESSIONID").invalidateHttpSession(true))
+				.logout(logout -> logout
+						.deleteCookies("JSESSIONID")
+						.invalidateHttpSession(true)
+						.logoutSuccessUrl("/"))
 				.formLogin(formLogin -> formLogin
 						.loginPage("/login")
 						.loginProcessingUrl("/login")

@@ -49,7 +49,8 @@
                             <c:when test="${empty pageContext.request.userPrincipal.name}">
                                 <div class="d-flex">
                                     <a href="#" class="btn btn-md me-2 btn-secondary px-3 py-2 rounded-pill"
-                                        type="button" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                        type="button" data-bs-toggle="modal" data-bs-target="#loginModal"
+                                        id="open-form-login">
                                         Login
                                     </a>
                                     <a href="/register" class="btn btn-md btn-outline-dark px-3 py-2 rounded-pill"

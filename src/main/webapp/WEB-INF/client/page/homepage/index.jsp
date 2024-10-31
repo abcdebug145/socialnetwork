@@ -188,6 +188,10 @@
                 <!-- End custom js for this page-->
                 <script>
                     function likePost(postId) {
+                        <c:if test="${empty pageContext.request.userPrincipal}">
+                            document.querySelector('#open-form-login').click();
+                            return;
+                        </c:if>
                         const likeBtn = document.getElementById(postId);
                         const likeCount = likeBtn.parentElement.nextElementSibling;
                         let count = parseInt(likeCount.textContent);
