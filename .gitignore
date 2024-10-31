@@ -31,6 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
-
-# Ignore application.properties file
+src/main/webapp/resources/images/post/
 src/main/resources/application.properties
