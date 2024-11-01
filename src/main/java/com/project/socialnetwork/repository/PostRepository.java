@@ -8,6 +8,6 @@ import com.project.socialnetwork.domain.Post;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @Query("SELECT p FROM Post p ORDER BY FUNCTION('RAND')")
-    java.util.List<Post> findALl();
+    @Query(value = "SELECT * FROM posts ORDER BY RAND()", nativeQuery = true)
+    java.util.List<Post> findAll();
 }

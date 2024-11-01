@@ -41,14 +41,15 @@ public class HomePageController {
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request) {
         Post newPost = new Post();
-        List<Post> posts = postService.getAllPosts();
         List<PostLiked> postLiked = new ArrayList<PostLiked>();
+        Account currAccount = null;
         HttpSession session = request.getSession();
         if (session.getAttribute("username") != null) {
             String username = session.getAttribute("username").toString();
-            Account currUser = accountService.findByEmail(username);
-            postLiked = accountService.getPostsLiked(currUser.getId());
+            currAccount = accountService.findByEmail(username);
+            postLiked = accountService.getPostsLiked(currAccount.getId());
         }
+        List<Post> posts = postService.getAllPosts(currAccount);
         model.addAttribute("listPost", posts);
         model.addAttribute("newPost", newPost);
         model.addAttribute("postLiked", postLiked);

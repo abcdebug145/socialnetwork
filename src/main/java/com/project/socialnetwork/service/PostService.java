@@ -1,5 +1,7 @@
 package com.project.socialnetwork.service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -25,8 +27,21 @@ public class PostService {
         this.accountRepository = accountRepository;
     }
 
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public List<Post> getAllPosts(Account currAccount) {
+        List<Post> posts = postRepository.findAll();
+        if (currAccount != null) {
+            List<Post> temp = new ArrayList<>();
+            Iterator<Post> iterator = posts.iterator();
+            while (iterator.hasNext()) {
+                Post post = iterator.next();
+                if (postLikedRepository.findByPostId(post.getId()) != null) {
+                    temp.add(post);
+                    iterator.remove();
+                }
+            }
+            posts.addAll(temp);
+        }
+        return posts;
     }
 
     public Post getPostById(Long id) {

@@ -20,4 +20,5 @@ public interface PostLikedRepository extends JpaRepository<PostLiked, Long> {
     @Query("SELECT pl FROM PostLiked pl WHERE pl.account = :account AND pl.post = :post")
     PostLiked findByAccountAndPost(Account account, Post post);
 
+    PostLiked findByPostId(Long postId);
 }

@@ -20,7 +20,7 @@ public class PostController {
 
     @GetMapping("/admin/posts")
     public String getPostsPage(@ModelAttribute Model model) {
-        List<Post> posts = postService.getAllPosts();
+        List<Post> posts = postService.getAllPosts(null);
         return "admin/page/post/posts";
     }
 }
