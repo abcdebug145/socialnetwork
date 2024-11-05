@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -39,7 +40,8 @@ public class HomePageController {
     }
 
     @GetMapping("/")
-    public String getHomePage(Model model, HttpServletRequest request) {
+    public String getHomePage(Model model, HttpServletRequest request,
+            @RequestParam("keyword") Optional<String> keyword) {
         Post newPost = new Post();
         List<PostLiked> postLiked = new ArrayList<PostLiked>();
         Account currAccount = null;
@@ -49,10 +51,13 @@ public class HomePageController {
             currAccount = accountService.findByEmail(username);
             postLiked = accountService.getPostsLiked(currAccount.getId());
         }
-        List<Post> posts = postService.getAllPosts(currAccount);
+        List<Post> posts = (keyword.isPresent()) ? postService.getAllPosts(currAccount, keyword.get())
+                : postService
+                        .getAllPosts(currAccount, "");
         model.addAttribute("listPost", posts);
         model.addAttribute("newPost", newPost);
         model.addAttribute("postLiked", postLiked);
+        model.addAttribute("keyword", keyword.isPresent() ? keyword.get() : "");
         return "client/page/homepage/index";
     }
 

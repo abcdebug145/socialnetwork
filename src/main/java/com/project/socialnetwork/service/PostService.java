@@ -27,8 +27,12 @@ public class PostService {
         this.accountRepository = accountRepository;
     }
 
-    public List<Post> getAllPosts(Account currAccount) {
-        List<Post> posts = postRepository.findAll();
+    public List<Post> getAllPosts(Account currAccount, String keyword) {
+        List<Post> posts = new ArrayList<>();
+        if (!keyword.equals(""))
+            posts = postRepository.search(keyword);
+        else
+            posts = postRepository.findAll();
         if (currAccount != null) {
             List<Post> temp = new ArrayList<>();
             Iterator<Post> iterator = posts.iterator();
@@ -39,6 +43,7 @@ public class PostService {
                     iterator.remove();
                 }
             }
+
             posts.addAll(temp);
         }
         return posts;

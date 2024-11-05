@@ -1,13 +1,14 @@
 package com.project.socialnetwork.controller.admin;
 
-import com.project.socialnetwork.domain.Post;
-import com.project.socialnetwork.service.PostService;
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.List;
+import com.project.socialnetwork.domain.Post;
+import com.project.socialnetwork.service.PostService;
 
 @Controller
 public class PostController {
@@ -20,7 +21,7 @@ public class PostController {
 
     @GetMapping("/admin/posts")
     public String getPostsPage(@ModelAttribute Model model) {
-        List<Post> posts = postService.getAllPosts(null);
+        List<Post> posts = postService.getAllPosts(null, "");
         return "admin/page/post/posts";
     }
 }

@@ -29,13 +29,14 @@
                                     onclick="ChangeCurrentActive(this)">Explore</a>
                             </li>
                         </ul>
-                        <form class="d-flex col-6 mx-auto" role="search">
+                        <form class="d-flex col-6 mx-auto" role="search" action="/" method="GET"
+                            modelAttribute="keyword">
                             <div class="input-group">
                                 <input class="form-control border-end-0 border rounded-pill" type="search"
-                                    placeholder="search" id="example-search-input" />
+                                    placeholder="search" id="example-search-input" name="keyword" value="${keyword}" />
                                 <span class="input-group-append">
                                     <button class="btn btn-outline-secondary bg-white border-0 rounded-pill ms-n5"
-                                        type="button">
+                                        type="submit">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="30"
                                             fill="currentColor" class="bi bi-search pt-2">
                                             <path

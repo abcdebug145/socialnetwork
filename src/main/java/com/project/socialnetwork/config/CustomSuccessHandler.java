@@ -22,7 +22,6 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         if (authentication.getPrincipal() instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             session.setAttribute("username", userDetails.getUsername());
-            // Lưu thêm các thông tin khác vào session nếu cần
         }
         response.sendRedirect("/");
     }
