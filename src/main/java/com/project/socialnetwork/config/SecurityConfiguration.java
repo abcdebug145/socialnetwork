@@ -17,7 +17,6 @@ import com.project.socialnetwork.service.AccountService;
 import com.project.socialnetwork.service.CustomUserDetailsService;
 
 import jakarta.servlet.DispatcherType;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
@@ -40,8 +39,7 @@ public class SecurityConfiguration {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setPasswordEncoder(passwordEncoder);
 		provider.setUserDetailsService(userDetailsService);
-		provider.setHideUserNotFoundExceptions(false); // default is true, bad
-		// credentials will be shown as bad credentials
+		provider.setHideUserNotFoundExceptions(false);
 		return provider;
 	}
 
@@ -57,7 +55,6 @@ public class SecurityConfiguration {
 						.permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.anyRequest().authenticated())
-				// .anyRequest().permitAll())
 				.sessionManagement((sessionManagement) -> sessionManagement
 						.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
 						.invalidSessionUrl("/logout?expired")
@@ -73,7 +70,6 @@ public class SecurityConfiguration {
 						.defaultSuccessUrl("/", true)
 						.successHandler(customAuthenticationSuccessHandler())
 						.failureHandler(authenticationFailureHandler())
-						// .failureUrl("/login?error")
 						.permitAll());
 		// .exceptionHandling(ex -> ex
 		// .accessDeniedPage("/page-not-found"));
@@ -87,9 +83,6 @@ public class SecurityConfiguration {
 
 	@Bean
 	public AuthenticationFailureHandler authenticationFailureHandler() {
-		return (request, response, exception) -> {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().write("Invalid email or password.");
-		};
+		return new CustomAuthenticationFailerHandler();
 	}
 }

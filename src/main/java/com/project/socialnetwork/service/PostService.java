@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.project.socialnetwork.domain.Account;
 import com.project.socialnetwork.domain.Post;
 import com.project.socialnetwork.domain.PostLiked;
-import com.project.socialnetwork.repository.AccountRepository;
 import com.project.socialnetwork.repository.PostLikedRepository;
 import com.project.socialnetwork.repository.PostRepository;
 
@@ -18,13 +17,10 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostLikedRepository postLikedRepository;
-    private final AccountRepository accountRepository;
 
-    public PostService(PostRepository postRepository, PostLikedRepository postLikedRepository,
-            AccountRepository accountRepository) {
+    public PostService(PostRepository postRepository, PostLikedRepository postLikedRepository) {
         this.postRepository = postRepository;
         this.postLikedRepository = postLikedRepository;
-        this.accountRepository = accountRepository;
     }
 
     public List<Post> getAllPosts(Account currAccount, String keyword) {
