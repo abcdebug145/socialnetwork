@@ -32,11 +32,7 @@ build/
 
 ### VS Code ###
 .vscode/
-<<<<<<< HEAD
-!**/src/main/webapp/resources/images/post/
-!**/src/main/resources/application.properties
-=======
 
 /src/main/webapp/resources/images/post/
-/src/main/resources/application.properties
->>>>>>> 3801c9368f1ce76d159c2dc320465024f29692e4
+src/main/resources/application.properties
+
