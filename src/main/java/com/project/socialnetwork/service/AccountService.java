@@ -1,24 +1,33 @@
 package com.project.socialnetwork.service;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.project.socialnetwork.domain.Account;
 import com.project.socialnetwork.domain.PostLiked;
 import com.project.socialnetwork.repository.AccountRepository;
 import com.project.socialnetwork.repository.PostLikedRepository;
 
+import jakarta.servlet.ServletContext;
+
 @Service
 public class AccountService {
     private final AccountRepository accountRepository;
     private final PostLikedRepository postLikedRepository;
+    private final UploadService uploadService;
+    private final ServletContext servletContext;
 
-    public AccountService(AccountRepository accountRepository, PostLikedRepository postLikedRepository) {
+    public AccountService(AccountRepository accountRepository, PostLikedRepository postLikedRepository,
+            UploadService uploadService, ServletContext servletContext) {
         this.accountRepository = accountRepository;
         this.postLikedRepository = postLikedRepository;
+        this.uploadService = uploadService;
+        this.servletContext = servletContext;
     }
 
     public Account saveAccount(Account account) {
@@ -64,5 +73,18 @@ public class AccountService {
 
     public List<PostLiked> getPostsLiked(Long accountId) {
         return postLikedRepository.findByAccount_Id(accountId);
+    }
+
+    public String newAvatar(String oldAvatar, MultipartFile newAvatar) {
+        if (!oldAvatar.equals("default-avatar.png")) {
+            String avatarPath = this.servletContext.getRealPath("/resources/images/avatar/" + oldAvatar);
+            try {
+                File file = new File(avatarPath);
+                file.delete();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return uploadService.saveUploadFile(newAvatar, "avatar");
     }
 }

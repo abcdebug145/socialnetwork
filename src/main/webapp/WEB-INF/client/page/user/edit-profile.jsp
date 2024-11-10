@@ -27,51 +27,56 @@
             </head>
 
             <body class="sb-nav-fixed">
-                <div class="container h-100 d-flex justify-content-center align-items-center">
-                    <div class="row w-100">
-                        <div class="col-md-4 col-sm-8 gradient-background p-4">
-                            <div class="card border-0 bg-transparent">
-                                <img src="https://placehold.co/200x200"
-                                    class="card-img-top rounded-circle mx-auto d-block" alt="Profile Picture"
-                                    id="avatarPicture" style="width: 200px; height: 200px" />
+                <form:form action="/profile/edit-profile" method="post" enctype="multipart/form-data"
+                    modelAttribute="account">
+                    <div class="container h-100 d-flex justify-content-center align-items-center">
+                        <div class="row w-100">
+                            <div class="col-md-4 col-sm-8 gradient-background p-4">
+                                <div class="card border-0 bg-transparent">
+                                    <img src="/images/avatar/${account.avatar}"
+                                        class="card-img-top rounded-circle mx-auto d-block" alt="Profile Picture"
+                                        id="avatarPicture" style="width: 200px; height: 200px" />
 
-                                <div class="card-body d-flex justify-content-center">
-                                    <input id="avatarInput" type="file" value="avatar" accept=".png,.jpeg,.jpg,.svg"
-                                        class="form-control" onchange="changeProfilePic(this.files[0])"
-                                        style="display: none" />
-                                    <button type="button" class="btn btn-primary"
-                                        onclick="document.getElementById('avatarInput').click()">
-                                        Change Avatar
-                                    </button>
+                                    <div class="card-body d-flex justify-content-center">
+                                        <input id="avatarInput" type="file" value="avatar" accept=".png,.jpeg,.jpg,.svg"
+                                            class="form-control" onchange="changeProfilePic(this.files[0])"
+                                            style="display: none" name="avatarFile" />
+                                        <button type="button" class="btn btn-primary"
+                                            onclick="document.getElementById('avatarInput').click()">
+                                            Change Avatar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-8 col-sm-8 text-white" style="background-color: #808080">
-                            <h3 class="my-4">User Information</h3>
-                            <hr />
-                            <form:form action="/profile/edit-profile" method="post" modelAttribute="account">
+                            <div class="col-md-8 col-sm-8 text-white" style="background-color: #808080">
+                                <h3 class="my-4">User Information</h3>
+                                <hr />
                                 <div class="row mb-3">
                                     <label for="username" class="col-sm-3 col-form-label">Username:</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="username" path="username"/>
+                                        <form:input type="text" class="form-control" id="username" path="username"
+                                            value="${account.username}" />
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="email" class="col-sm-3 col-form-label">Email:</label>
                                     <div class="col-sm-9">
-                                        <input type="email" class="form-control" id="email" path="email"/>
+                                        <form:input type="email" class="form-control" id="email" path="email"
+                                            value="${account.email}" />
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="fullname" class="col-sm-3 col-form-label">Full Name:</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="fullname" path="fullName"/>
+                                        <form:input type="text" class="form-control" id="fullname" path="fullName"
+                                            value="${account.fullName}" />
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="address" class="col-sm-3 col-form-label">Address:</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="fullname" path="address" />
+                                        <form:input type="text" class="form-control" id="fullname" path="address"
+                                            value="${account.address}" />
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -81,42 +86,20 @@
                                         </button>
                                     </div>
                                 </div>
-                            </form:form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-                    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-                    crossorigin="anonymous">
-                    </script>
-
+                </form:form>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+                    crossorigin="anonymous"></script>
+                <script src="${pageContext.request.contextPath}/js/scripts.js"></script>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
                 <script>
                     function changeProfilePic(file) {
                         var img = document.getElementById("avatarPicture");
                         img.src = window.URL.createObjectURL(file);
                     }
                 </script>
-                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-                <script>
-                    $(document).ready(() => {
-                        const avatarFile = $("#imageFile");
-                        avatarFile.change(function (e) {
-                            const imgURL = URL.createObjectURL(e.target.files[0]);
-                            $("#avatarPreview").attr("src", imgURL);
-                            $("#avatarPreview").css({ "display": "block" });
-                        });
-                    });
-                </script>
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-                    crossorigin="anonymous"></script>
-                <script src="${pageContext.request.contextPath}/js/scripts.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
-                    crossorigin="anonymous"></script>
-                <script src="${pageContext.request.contextPath}/assets/demo/chart-area-demo.js"></script>
-                <script src="${pageContext.request.contextPath}/assets/demo/chart-bar-demo.js"></script>
-                <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
-                    crossorigin="anonymous"></script>
-                <script src="${pageContext.request.contextPath}/js/datatables-simple-demo.js"></script>
             </body>
 
             </html>

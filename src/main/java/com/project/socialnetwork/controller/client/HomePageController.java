@@ -75,9 +75,29 @@ public class HomePageController {
     }
 
     @GetMapping("/profile/edit-profile")
-    public String getEditProfilePage(Model model) {
-        model.addAttribute("editAccount", new Account());
+    public String getEditProfilePage(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String username = session.getAttribute("username").toString();
+        Account currAccount = accountService.findByEmail(username);
+        model.addAttribute("account", currAccount);
         return "client/page/user/edit-profile";
+    }
+
+    @PostMapping("/profile/edit-profile")
+    public String saveProfile(@ModelAttribute("account") Account account, HttpServletRequest request,
+            @RequestParam("avatarFile") MultipartFile avatar) {
+        HttpSession session = request.getSession();
+        String username = session.getAttribute("username").toString();
+        Account currAccount = accountService.findByEmail(username);
+        currAccount.setAddress(account.getAddress());
+        currAccount.setEmail(account.getEmail());
+        session.setAttribute("username", currAccount.getEmail());
+        currAccount.setUsername(account.getUsername());
+        currAccount.setFullName(account.getFullName());
+        if (!avatar.getOriginalFilename().equals(""))
+            currAccount.setAvatar(accountService.newAvatar(currAccount.getAvatar(), avatar));
+        accountService.saveAccount(currAccount);
+        return "redirect:/profile/edit-profile";
     }
 
     @GetMapping("/page-not-found")
