@@ -24,7 +24,6 @@ public class SecurityConfiguration {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		// return new DisabledPasswordEncoder();
 		return new BCryptPasswordEncoder();
 	}
 

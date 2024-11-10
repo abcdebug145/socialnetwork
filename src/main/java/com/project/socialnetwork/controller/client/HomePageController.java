@@ -90,10 +90,10 @@ public class HomePageController {
         String username = session.getAttribute("username").toString();
         Account currAccount = accountService.findByEmail(username);
         currAccount.setAddress(account.getAddress());
-        currAccount.setEmail(account.getEmail());
         session.setAttribute("username", currAccount.getEmail());
         currAccount.setUsername(account.getUsername());
         currAccount.setFullName(account.getFullName());
+        currAccount.setAbout(account.getAbout());
         if (!avatar.getOriginalFilename().equals(""))
             currAccount.setAvatar(accountService.newAvatar(currAccount.getAvatar(), avatar));
         accountService.saveAccount(currAccount);

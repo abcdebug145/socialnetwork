@@ -1,5 +1,8 @@
 package com.project.socialnetwork.controller.client;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,6 +65,17 @@ public class UserController {
         account.setPassword(password);
         accountService.saveAccount(account);
         return "redirect:/login";
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(HttpServletRequest request, @RequestBody String passwordData) {
+        String password = passwordData.split(":\"")[1].split("\"")[0].split("}")[0];//{"password":"hehe"}
+        HttpSession session = request.getSession();
+        String username = session.getAttribute("username").toString();
+        Account currAccount = accountService.findByEmail(username);
+        String passwordEncoded = passwordEncoder.encode(password);
+        currAccount.setPassword(passwordEncoded);
+        return ResponseEntity.ok("success");
     }
     
 }

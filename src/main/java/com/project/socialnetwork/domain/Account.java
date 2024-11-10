@@ -36,6 +36,7 @@ public class Account {
     private String address;
     private String email;
     private String avatar;
+    private String about;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
