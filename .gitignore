@@ -1,4 +1,5 @@
 HELP.md
+todo.txt
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -32,3 +33,5 @@ build/
 ### VS Code ###
 .vscode/
 
+/src/main/webapp/resources/images/post/
+/src/main/resources/application.properties
