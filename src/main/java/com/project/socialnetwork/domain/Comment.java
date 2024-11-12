@@ -16,17 +16,18 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "posts_liked")
+@Table(name = "comments")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostLiked {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String content;
     private Date date = new Date();
 
     @ManyToOne

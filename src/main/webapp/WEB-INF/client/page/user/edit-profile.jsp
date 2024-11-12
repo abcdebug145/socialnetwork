@@ -171,7 +171,6 @@
     function changePassword() {
         const password = document.getElementById('password').value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        console.log(csrfToken);
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
         fetch('/changePassword', {

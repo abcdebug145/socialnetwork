@@ -37,6 +37,7 @@ public class Account {
     private String email;
     private String avatar;
     private String about;
+    private int unreadNoti = 0;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -51,5 +52,11 @@ public class Account {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
     private Set<PostLiked> postLikeds;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
+    private Set<Comment> comments;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
+    private Set<Notification> notifications;
 
 }

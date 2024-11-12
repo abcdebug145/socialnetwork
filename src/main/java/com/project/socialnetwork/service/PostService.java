@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.project.socialnetwork.domain.Comment;
+import com.project.socialnetwork.repository.CommentRepository;
 import org.springframework.stereotype.Service;
 
 import com.project.socialnetwork.domain.Account;
@@ -17,10 +19,12 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostLikedRepository postLikedRepository;
+    private final CommentRepository commentRepository;
 
-    public PostService(PostRepository postRepository, PostLikedRepository postLikedRepository) {
+    public PostService(PostRepository postRepository, PostLikedRepository postLikedRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
         this.postLikedRepository = postLikedRepository;
+        this.commentRepository = commentRepository;
     }
 
     public List<Post> getAllPosts(Account currAccount, String keyword) {
@@ -68,5 +72,13 @@ public class PostService {
         } else {
             postLikedRepository.delete(postLiked);
         }
+    }
+
+    public void createComment(String content, Account account, Post post) {
+        Comment comment = new Comment();
+        comment.setContent(content);
+        comment.setAccount(account);
+        comment.setPost(post);
+        commentRepository.save(comment);
     }
 }

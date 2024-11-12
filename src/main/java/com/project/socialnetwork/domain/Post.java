@@ -1,5 +1,6 @@
 package com.project.socialnetwork.domain;
 
+import java.util.Date;
 import java.util.Set;
 
 import jakarta.persistence.Entity;
@@ -31,6 +32,7 @@ public class Post {
     private String title;
     private String image;
     private int likeCount;
+    private Date date = new Date();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
@@ -39,4 +41,9 @@ public class Post {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
     private Set<PostLiked> postLikeds;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+    private Set<Comment> comments;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+    private Set<Notification> notifications;
 }

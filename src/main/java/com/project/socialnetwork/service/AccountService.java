@@ -3,6 +3,9 @@ package com.project.socialnetwork.service;
 import java.io.File;
 import java.util.List;
 
+import com.project.socialnetwork.domain.Comment;
+import com.project.socialnetwork.domain.Post;
+import com.project.socialnetwork.repository.CommentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -87,4 +90,5 @@ public class AccountService {
         }
         return uploadService.saveUploadFile(newAvatar, "avatar");
     }
+
 }

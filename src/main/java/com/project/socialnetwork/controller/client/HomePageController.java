@@ -13,43 +13,43 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.socialnetwork.domain.Account;
+import com.project.socialnetwork.domain.Notification;
 import com.project.socialnetwork.domain.Post;
 import com.project.socialnetwork.domain.PostLiked;
 import com.project.socialnetwork.service.AccountService;
+import com.project.socialnetwork.service.NotificationService;
 import com.project.socialnetwork.service.PostService;
 import com.project.socialnetwork.service.UploadService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 
 @Controller
+@AllArgsConstructor
 public class HomePageController {
 
     private final PostService postService;
     private final UploadService uploadService;
     private final AccountService accountService;
-
-    public HomePageController(PostService postService, UploadService uploadService, AccountService accountService) {
-        this.postService = postService;
-        this.uploadService = uploadService;
-        this.accountService = accountService;
-    }
+    private final NotificationService notificationService;
 
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request,
             @RequestParam("keyword") Optional<String> keyword) {
         Post newPost = new Post();
         List<PostLiked> postLiked = new ArrayList<PostLiked>();
+        List<Notification> notifications = new ArrayList<>();
         Account currAccount = null;
         HttpSession session = request.getSession();
         if (session.getAttribute("username") != null) {
             String username = session.getAttribute("username").toString();
             currAccount = accountService.findByEmail(username);
             postLiked = accountService.getPostsLiked(currAccount.getId());
+            notifications = notificationService.getAllNotifications(currAccount.getId());
         }
         List<Post> posts = (keyword.isPresent()) ? postService.getAllPosts(currAccount, keyword.get())
                 : postService
@@ -57,7 +57,9 @@ public class HomePageController {
         model.addAttribute("listPost", posts);
         model.addAttribute("newPost", newPost);
         model.addAttribute("postLiked", postLiked);
+        model.addAttribute("account", currAccount);
         model.addAttribute("keyword", keyword.isPresent() ? keyword.get() : "");
+        model.addAttribute("notifications", notifications);
         return "client/page/homepage/index";
     }
 
@@ -104,17 +106,8 @@ public class HomePageController {
     public String getPage() {
         return "client/page/auth/404";
     }
-}
 
-@RestController
-class APIController {
-    private final PostService postService;
-    private final AccountService accountService;
-
-    public APIController(PostService postService, AccountService accountService) {
-        this.postService = postService;
-        this.accountService = accountService;
-    }
+    // --------------------- API ---------------------
 
     @PostMapping("/likePost")
     public ResponseEntity<Map<String, Object>> likePost(@RequestParam("id") Long postId,
@@ -125,6 +118,7 @@ class APIController {
         postService.likePost(post, currAccount);
         post.setLikeCount(post.getPostLikeds().size());
         postService.savePost(post);
+        notificationService.createNotification(currAccount, post, "like");
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
@@ -142,4 +136,17 @@ class APIController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/createComment")
+    public ResponseEntity<Map<String, Object>> createComment(@RequestParam("postId") Long postId,
+            @RequestParam("comment") String comment,
+            HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Account currAccount = accountService.findByEmail(session.getAttribute("username").toString());
+        Post post = postService.getPostById(postId);
+        postService.createComment(comment, currAccount, post);
+        notificationService.createNotification(currAccount, post, "comment");
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        return ResponseEntity.ok(response);
+    }
 }

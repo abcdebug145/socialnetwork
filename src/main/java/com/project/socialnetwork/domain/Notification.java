@@ -16,17 +16,19 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "posts_liked")
+@Table(name = "notifications")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostLiked {
+public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String message;
+    private boolean isRead;
     private Date date = new Date();
 
     @ManyToOne
