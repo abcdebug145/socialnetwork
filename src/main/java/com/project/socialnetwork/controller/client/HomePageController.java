@@ -11,15 +11,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.socialnetwork.domain.Account;
+import com.project.socialnetwork.domain.Comment;
 import com.project.socialnetwork.domain.Notification;
 import com.project.socialnetwork.domain.Post;
 import com.project.socialnetwork.domain.PostLiked;
 import com.project.socialnetwork.service.AccountService;
+import com.project.socialnetwork.service.CommentService;
 import com.project.socialnetwork.service.NotificationService;
 import com.project.socialnetwork.service.PostService;
 import com.project.socialnetwork.service.UploadService;
@@ -36,6 +39,7 @@ public class HomePageController {
     private final UploadService uploadService;
     private final AccountService accountService;
     private final NotificationService notificationService;
+    private final CommentService commentService;
 
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request,
@@ -61,6 +65,15 @@ public class HomePageController {
         model.addAttribute("keyword", keyword.isPresent() ? keyword.get() : "");
         model.addAttribute("notifications", notifications);
         return "client/page/homepage/index";
+    }
+
+    @GetMapping("/post/{postId}")
+    public String getDetailPost(Model model, @PathVariable("postId") Long postId) {
+        Post post = postService.getPostById(postId);
+        List<Comment> comments = commentService.getAllComment(post);
+        model.addAttribute("post", post);
+        model.addAttribute("comments", comments);
+        return "client/page/homepage/post-detail";
     }
 
     @PostMapping("/create-post")

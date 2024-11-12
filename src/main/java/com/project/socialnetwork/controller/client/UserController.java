@@ -1,7 +1,5 @@
 package com.project.socialnetwork.controller.client;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -9,20 +7,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.project.socialnetwork.domain.Account;
-import com.project.socialnetwork.domain.Post;
 import com.project.socialnetwork.service.AccountService;
 import com.project.socialnetwork.service.RoleService;
 import com.project.socialnetwork.service.StatusService;
-import com.project.socialnetwork.service.UploadService;
 
-import jakarta.servlet.annotation.MultipartConfig;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
@@ -69,7 +62,7 @@ public class UserController {
 
     @PostMapping("/changePassword")
     public ResponseEntity<String> changePassword(HttpServletRequest request, @RequestBody String passwordData) {
-        String password = passwordData.split(":\"")[1].split("\"")[0].split("}")[0];//{"password":"hehe"}
+        String password = passwordData.split(":\"")[1].split("\"")[0].split("}")[0];// {"password":"hehe"}
         HttpSession session = request.getSession();
         String username = session.getAttribute("username").toString();
         Account currAccount = accountService.findByEmail(username);
@@ -77,5 +70,5 @@ public class UserController {
         currAccount.setPassword(passwordEncoded);
         return ResponseEntity.ok("success");
     }
-    
+
 }
