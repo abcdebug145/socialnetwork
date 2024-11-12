@@ -54,6 +54,7 @@ public class HomePageController {
             currAccount = accountService.findByEmail(username);
             postLiked = accountService.getPostsLiked(currAccount.getId());
             notifications = notificationService.getAllNotifications(currAccount.getId());
+            currAccount.setUnreadNoti(notifications.size());
         }
         List<Post> posts = (keyword.isPresent()) ? postService.getAllPosts(currAccount, keyword.get())
                 : postService

@@ -33,7 +33,7 @@
                     <div class="post-image">
                         <c:choose>
                             <c:when test="${not fn:containsIgnoreCase(post.image, 'http')}">
-                                <img src="images/post/${post.image}" class="img-fluid" alt="Post Image">
+                                <img src="/images/post/${post.image}" class="img-fluid" alt="Post Image">
                             </c:when>
                             <c:otherwise>
                                 <img src="${post.image}" class="img-fluid" alt="Post Image">

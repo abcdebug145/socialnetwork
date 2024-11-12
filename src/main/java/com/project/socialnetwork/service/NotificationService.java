@@ -17,12 +17,12 @@ public class NotificationService {
     private NotificationRepository notificationRepository;
 
     public List<Notification> getAllNotifications(Long accountId) {
-        return notificationRepository.findByAccount_Id(accountId);
+        return notificationRepository.findNotificationsExcludingAccountAndPosts(accountId);
     }
 
-    public List<Notification> getAllUnreadNotifications(Long accountId) {
-        return notificationRepository.findUnreadNotiByAccount_Id(accountId);
-    }
+    // public List<Notification> getAllUnreadNotifications(Long accountId) {
+    // return notificationRepository.findUnreadNotiByAccount_Id(accountId);
+    // }
 
     public void createNotification(Account account, Post post, String type) {
         String message = "";
