@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,8 @@ public class Comment {
     private Long id;
     private String content;
     private Date date = new Date();
+    @Transient
+    private String timeAgo;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
