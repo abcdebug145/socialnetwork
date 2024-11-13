@@ -44,6 +44,7 @@
         <div class="container">
             <p>Avatar</p>
         </div>
+        <%--@elvariable id="account" type="com.project.socialnetwork.domain.Account"--%>
         <form:form action="/profile/edit-profile" method="post" modelAttribute="account" enctype="multipart/form-data"
                    id="editProfileForm">
             <div class="d-flex container">
