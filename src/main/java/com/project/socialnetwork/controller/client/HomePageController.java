@@ -43,7 +43,7 @@ public class HomePageController {
 
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request,
-            @RequestParam("keyword") Optional<String> keyword) {
+                              @RequestParam("keyword") Optional<String> keyword) {
         Post newPost = new Post();
         List<PostLiked> postLiked = new ArrayList<PostLiked>();
         List<Notification> notifications = new ArrayList<>();
@@ -58,7 +58,7 @@ public class HomePageController {
         }
         List<Post> posts = (keyword.isPresent()) ? postService.getAllPosts(currAccount, keyword.get())
                 : postService
-                        .getAllPosts(currAccount, "");
+                .getAllPosts(currAccount, "");
         model.addAttribute("listPost", posts);
         model.addAttribute("newPost", newPost);
         model.addAttribute("postLiked", postLiked);
@@ -72,6 +72,8 @@ public class HomePageController {
     public String getDetailPost(Model model, @PathVariable("postId") Long postId) {
         Post post = postService.getPostById(postId);
         List<Comment> comments = commentService.getAllComment(post);
+        List<Post> listPost = postService.getAllPosts(null, "");
+        model.addAttribute("listPost", listPost);
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
         return "client/page/homepage/post-detail";
@@ -79,7 +81,7 @@ public class HomePageController {
 
     @PostMapping("/create-post")
     public String createPost(@ModelAttribute("newPost") Post post, @RequestParam("postFile") MultipartFile file,
-            HttpServletRequest request) {
+                             HttpServletRequest request) {
         String imgPath = uploadService.saveUploadFile(file, "post");
         post.setImage(imgPath);
         post.setLikeCount(0);
@@ -101,7 +103,7 @@ public class HomePageController {
 
     @PostMapping("/profile/edit-profile")
     public String saveProfile(@ModelAttribute("account") Account account, HttpServletRequest request,
-            @RequestParam("avatarFile") MultipartFile avatar) {
+                              @RequestParam("avatarFile") MultipartFile avatar) {
         HttpSession session = request.getSession();
         String username = session.getAttribute("username").toString();
         Account currAccount = accountService.findByEmail(username);
@@ -125,7 +127,7 @@ public class HomePageController {
 
     @PostMapping("/likePost")
     public ResponseEntity<Map<String, Object>> likePost(@RequestParam("id") Long postId,
-            @RequestParam("like") boolean like, HttpServletRequest request) {
+                                                        @RequestParam("like") boolean like, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Account currAccount = accountService.findByEmail(session.getAttribute("username").toString());
         Post post = postService.getPostById(postId);
@@ -152,8 +154,8 @@ public class HomePageController {
 
     @PostMapping("/createComment")
     public ResponseEntity<Map<String, Object>> createComment(@RequestParam("postId") Long postId,
-            @RequestParam("comment") String comment,
-            HttpServletRequest request) {
+                                                             @RequestParam("comment") String comment,
+                                                             HttpServletRequest request) {
         HttpSession session = request.getSession();
         Account currAccount = accountService.findByEmail(session.getAttribute("username").toString());
         Post post = postService.getPostById(postId);
@@ -163,4 +165,5 @@ public class HomePageController {
         response.put("success", true);
         return ResponseEntity.ok(response);
     }
+
 }
