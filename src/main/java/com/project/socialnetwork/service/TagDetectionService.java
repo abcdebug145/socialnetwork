@@ -1,4 +1,4 @@
-package com.project.socialnetwork.controller.client;
+package com.project.socialnetwork.service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,12 +11,55 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
-public class Test {
-    public static void main(String[] args) throws IOException {
-        String apiKey = "acc_50c2a40d27ff435";
-        String apiSecret = "c99e88532b756ce236649f1543c5a0ad";
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.ServletContext;
+
+@Service
+public class TagDetectionService {
+    @Autowired
+    private ServletContext servletContext;
+    @Autowired
+    private Environment environment;
+
+    public List<String> getTags(String response) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(response);
+
+            List<String> tags = new ArrayList<>();
+            JsonNode tagsNode = rootNode.path("result").path("tags");
+
+            for (JsonNode tagNode : tagsNode) {
+                double confidence = tagNode.path("confidence").asDouble();
+                if (confidence > 50.0) {
+                    String tag = tagNode.path("tag").path("en").asText();
+                    tags.add(tag);
+                }
+            }
+            return tags;
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getJsonResponse(String imageName) throws IOException {
+        String apiKey = environment.getProperty("env.data.apiKey");
+        String apiSecret = environment.getProperty("env.data.apiSecret");
 
         // Encode the credentials to Base64
         String credentialsToEncode = apiKey + ":" + apiSecret;
@@ -26,8 +69,8 @@ public class Test {
         String endpointUrl = "https://api.imagga.com/v2/tags";
 
         // Path to your local image file
-        File imageFile = new File(
-                "C:\\Users\\scamq\\OneDrive\\Desktop\\pbl\\socialnetwork\\src\\main\\webapp\\resources\\images\\post\\1f76841da7121d20a908e33f0c8df2a1.jpg");
+        String pathName = this.servletContext.getRealPath("/resources/images/post/" + imageName);
+        File imageFile = new File(pathName);
 
         // Set up connection
         URL urlObject = new URL(endpointUrl);
@@ -80,8 +123,9 @@ public class Test {
             }
 
             System.out.println("Response: " + jsonResponse.toString());
+            return jsonResponse.toString();
+        } finally {
+            connection.disconnect();
         }
-
-        connection.disconnect();
     }
 }

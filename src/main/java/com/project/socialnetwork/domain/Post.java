@@ -46,4 +46,7 @@ public class Post {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
     private Set<Notification> notifications;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+    private Set<PostTag> postTags;
 }

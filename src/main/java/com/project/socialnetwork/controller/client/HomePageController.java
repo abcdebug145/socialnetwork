@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +20,7 @@ import com.project.socialnetwork.domain.Comment;
 import com.project.socialnetwork.domain.Notification;
 import com.project.socialnetwork.domain.Post;
 import com.project.socialnetwork.domain.PostLiked;
+import com.project.socialnetwork.domain.Tag;
 import com.project.socialnetwork.service.AccountService;
 import com.project.socialnetwork.service.CommentService;
 import com.project.socialnetwork.service.NotificationService;
@@ -43,7 +43,7 @@ public class HomePageController {
 
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request,
-            @RequestParam("keyword") Optional<String> keyword) {
+            @RequestParam("keyword") Optional<String> keyword, @RequestParam("postId") Optional<Long> postId) {
         Post newPost = new Post();
         List<PostLiked> postLiked = new ArrayList<PostLiked>();
         List<Notification> notifications = new ArrayList<>();
@@ -59,6 +59,14 @@ public class HomePageController {
         List<Post> posts = (keyword.isPresent()) ? postService.getAllPosts(currAccount, keyword.get())
                 : postService
                         .getAllPosts(currAccount, "");
+        if (postId.isPresent()) {
+            Post post = postService.getPostById(postId.get());
+            List<Comment> comments = commentService.getAllComment(post);
+            List<Tag> tags = postService.getAllTagsByPost(post);
+            posts = postService.getAllSimilarPosts(tags);
+            model.addAttribute("post", post);
+            model.addAttribute("comments", comments);
+        }
         model.addAttribute("listPost", posts);
         model.addAttribute("newPost", newPost);
         model.addAttribute("postLiked", postLiked);
@@ -66,15 +74,6 @@ public class HomePageController {
         model.addAttribute("keyword", keyword.isPresent() ? keyword.get() : "");
         model.addAttribute("notifications", notifications);
         return "client/page/homepage/index";
-    }
-
-    @GetMapping("/post/{postId}")
-    public String getDetailPost(Model model, @PathVariable("postId") Long postId) {
-        Post post = postService.getPostById(postId);
-        List<Comment> comments = commentService.getAllComment(post);
-        model.addAttribute("post", post);
-        model.addAttribute("comments", comments);
-        return "client/page/homepage/post-detail";
     }
 
     @PostMapping("/create-post")
