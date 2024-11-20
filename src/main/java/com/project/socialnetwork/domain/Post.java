@@ -33,6 +33,7 @@ public class Post {
     private String image;
     private int likeCount;
     private Date date = new Date();
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
@@ -46,7 +47,4 @@ public class Post {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
     private Set<Notification> notifications;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
-    private Set<PostTag> postTags;
 }

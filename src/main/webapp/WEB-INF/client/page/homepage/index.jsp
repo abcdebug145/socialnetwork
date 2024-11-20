@@ -69,13 +69,13 @@
                                         </div>
                                     </c:forEach>
                                     <div class="position-absolute bottom-0 pb-5 col-12">
-                                        <form:form action="/comment" method="post">
-                                            <input type="hidden" name="postId" value="${post.id}">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" name="comment" id="${post.id}"
-                                                    rows="3" placeholder="Write a comment"></input>
-                                            </div>
-                                        </form:form>
+                                        <!-- <form:form action="/createComment" method="post"> -->
+                                        <input type="hidden" name="postId" value="${post.id}">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="comment" id="${post.id}"
+                                                rows="3" placeholder="Write a comment"></input>
+                                        </div>
+                                        <!-- </form:form> -->
                                     </div>
                                 </div>
                                 <jsp:include page="../layout/content-pane.jsp"></jsp:include>
@@ -87,13 +87,6 @@
                     integrity="sha384-tsQFqpERiu9W1NUMXXfO5pLnAM6ScJS/6aINHpqlnqu8qZWjW0k6ujUib3WTOE6s"
                     crossorigin="anonymous"></script>
 
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
-                    crossorigin="anonymous"></script>
-
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-                    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-                    crossorigin="anonymous"></script>
-
                 <!-- End custom js for this page-->
 
                 <script>
@@ -102,13 +95,20 @@
                         const fileReader = new FileReader();
                     }
 
-                    function submitComment(postId) {
-                        const comment = document.getElementById('comment-' + postId).value;
+                    document.getElementsByName('comment')[0].addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') {
+                            var message = document.getElementsByName('comment')[0].value;
+                            var postId = document.getElementById('${post.id}').getAttribute('id');
+                            submitComment(message, postId);
+                            document.getElementsByName('comment')[0].value = "";
+                        }
+                    });
+
+                    function submitComment(message, postId) {
                         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
                         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-                        console.log("CMt: " + comment);
 
-                        fetch('/createComment?postId=' + postId + '&comment=' + comment, {
+                        fetch('/createComment?postId=' + postId + '&comment=' + message, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -119,12 +119,10 @@
                                 if (!response.ok) {
                                     throw new Error('Network response was not ok');
                                 }
-                                return response.json();
+                                //return response.json();
                             })
                             .then(data => {
-                                if (data.success) {
-                                    console.log(data);
-                                }
+
                             })
                             .catch(error => {
                                 console.error('Error:', error);

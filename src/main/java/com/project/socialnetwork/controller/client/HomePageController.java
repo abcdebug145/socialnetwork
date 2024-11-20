@@ -20,7 +20,6 @@ import com.project.socialnetwork.domain.Comment;
 import com.project.socialnetwork.domain.Notification;
 import com.project.socialnetwork.domain.Post;
 import com.project.socialnetwork.domain.PostLiked;
-import com.project.socialnetwork.domain.Tag;
 import com.project.socialnetwork.service.AccountService;
 import com.project.socialnetwork.service.CommentService;
 import com.project.socialnetwork.service.NotificationService;
@@ -62,8 +61,8 @@ public class HomePageController {
         if (postId.isPresent()) {
             Post post = postService.getPostById(postId.get());
             List<Comment> comments = commentService.getAllComment(post);
-            List<Tag> tags = postService.getAllTagsByPost(post);
-            posts = postService.getAllSimilarPosts(tags);
+            // List<Tag> tags = postService.getAllTagsByPost(post);
+            // posts = postService.getAllSimilarPosts(tags);
             model.addAttribute("post", post);
             model.addAttribute("comments", comments);
         }

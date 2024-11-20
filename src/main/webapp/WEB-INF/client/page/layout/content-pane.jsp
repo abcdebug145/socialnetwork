@@ -20,17 +20,8 @@
                                 <a href="/?postId=${post.id}">
                                     <div class="col-md-4 mb-4">
                                         <div class="card">
-                                            <c:choose>
-                                                <c:when test="${not fn:contains(post.image, 'http')}">
-                                                    <img src="/images/post/${post.image}" class="card-img-top"
-                                                        alt="Placeholder image">
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <img src="${post.image}" class="card-img-top"
-                                                        alt="Placeholder image">
-                                                </c:otherwise>
-                                            </c:choose>
-
+                                            <img src="/images/post/${post.image}" class="card-img-top"
+                                                alt="${post.content}">
                                             <div class="card-body">
                                                 <a href="/?postId=${post.id}" style="text-decoration: none;">
                                                     <h5 class="card-title">${post.title}</h5>
