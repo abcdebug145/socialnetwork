@@ -24,7 +24,7 @@ public class PostService {
     private final ContentDetectionService contentDetectionService;
 
     public PostService(PostRepository postRepository, PostLikedRepository postLikedRepository,
-            CommentRepository commentRepository, ContentDetectionService contentDetectionService) {
+                       CommentRepository commentRepository, ContentDetectionService contentDetectionService) {
         this.postRepository = postRepository;
         this.postLikedRepository = postLikedRepository;
         this.commentRepository = commentRepository;
@@ -53,6 +53,23 @@ public class PostService {
         return posts;
     }
 
+    public List<Post> getAllPostsByAccount(Account account) {
+        return postRepository.findByAccountId(account.getId());
+    }
+
+    public List<Post> getAllSimilarPosts(List<Tag> tags) {
+        Set<Post> posts = new HashSet<>();
+        for (Tag tag : tags) {
+            List<PostTag> postTags = postTagRepository.findByTag(tag);
+            for (PostTag postTag : postTags) {
+                posts.add(postTag.getPost());
+            }
+        }
+        List<Post> postList = new ArrayList<>(posts);
+        Collections.shuffle(postList);
+        return postList;
+    }
+    
     // public List<Post> getAllSimilarPosts(Post post) {
     // List<Post> post
     // Collections.shuffle(postList);
