@@ -57,24 +57,6 @@ public class PostService {
         return postRepository.findByAccountId(account.getId());
     }
 
-    public List<Post> getAllSimilarPosts(List<Tag> tags) {
-        Set<Post> posts = new HashSet<>();
-        for (Tag tag : tags) {
-            List<PostTag> postTags = postTagRepository.findByTag(tag);
-            for (PostTag postTag : postTags) {
-                posts.add(postTag.getPost());
-            }
-        }
-        List<Post> postList = new ArrayList<>(posts);
-        Collections.shuffle(postList);
-        return postList;
-    }
-    
-    // public List<Post> getAllSimilarPosts(Post post) {
-    // List<Post> post
-    // Collections.shuffle(postList);
-    // return postList;
-    // }
 
     public Post getPostById(Long id) {
         return postRepository.findById(id).orElse(null);
