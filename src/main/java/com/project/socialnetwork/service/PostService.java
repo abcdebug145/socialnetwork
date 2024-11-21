@@ -33,8 +33,8 @@ public class PostService {
     private final TagRepository tagRepository;
 
     public PostService(PostRepository postRepository, PostLikedRepository postLikedRepository,
-            CommentRepository commentRepository, TagDetectionService tagDetectionService,
-            PostTagRepository postTagRepository, TagRepository tagRepository) {
+                       CommentRepository commentRepository, TagDetectionService tagDetectionService,
+                       PostTagRepository postTagRepository, TagRepository tagRepository) {
         this.postRepository = postRepository;
         this.postLikedRepository = postLikedRepository;
         this.commentRepository = commentRepository;
@@ -63,6 +63,10 @@ public class PostService {
             posts.addAll(temp);
         }
         return posts;
+    }
+
+    public List<Post> getAllPostsByAccount(Account account) {
+        return postRepository.findByAccountId(account.getId());
     }
 
     public List<Post> getAllSimilarPosts(List<Tag> tags) {

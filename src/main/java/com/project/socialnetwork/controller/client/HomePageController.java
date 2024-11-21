@@ -9,10 +9,7 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.socialnetwork.domain.Account;
@@ -43,7 +40,7 @@ public class HomePageController {
 
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request,
-            @RequestParam("keyword") Optional<String> keyword, @RequestParam("postId") Optional<Long> postId) {
+                              @RequestParam("keyword") Optional<String> keyword, @RequestParam("postId") Optional<Long> postId) {
         Post newPost = new Post();
         List<PostLiked> postLiked = new ArrayList<PostLiked>();
         List<Notification> notifications = new ArrayList<>();
@@ -58,7 +55,7 @@ public class HomePageController {
         }
         List<Post> posts = (keyword.isPresent()) ? postService.getAllPosts(currAccount, keyword.get())
                 : postService
-                        .getAllPosts(currAccount, "");
+                .getAllPosts(currAccount, "");
         if (postId.isPresent()) {
             Post post = postService.getPostById(postId.get());
             List<Comment> comments = commentService.getAllComment(post);
@@ -78,7 +75,7 @@ public class HomePageController {
 
     @PostMapping("/create-post")
     public String createPost(@ModelAttribute("newPost") Post post, @RequestParam("postFile") MultipartFile file,
-            HttpServletRequest request) {
+                             HttpServletRequest request) {
         String imgPath = uploadService.saveUploadFile(file, "post");
         post.setImage(imgPath);
         post.setLikeCount(0);
@@ -87,6 +84,16 @@ public class HomePageController {
         Account currAccount = accountService.findByEmail(username);
         postService.createPost(currAccount, post);
         return "redirect:/";
+    }
+
+    @GetMapping("/profile/{username}")
+    public String getProfilePage(Model model, @PathVariable("username") String username, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Account account = accountService.findByUsername(username);
+        List<Post> posts = postService.getAllPostsByAccount(account);
+        model.addAttribute("account", account);
+        model.addAttribute("listPost", posts);
+        return "client/page/user/user-profile";
     }
 
     @GetMapping("/profile/edit-profile")
@@ -100,7 +107,7 @@ public class HomePageController {
 
     @PostMapping("/profile/edit-profile")
     public String saveProfile(@ModelAttribute("account") Account account, HttpServletRequest request,
-            @RequestParam("avatarFile") MultipartFile avatar) {
+                              @RequestParam("avatarFile") MultipartFile avatar) {
         HttpSession session = request.getSession();
         String username = session.getAttribute("username").toString();
         Account currAccount = accountService.findByEmail(username);
@@ -124,7 +131,7 @@ public class HomePageController {
 
     @PostMapping("/likePost")
     public ResponseEntity<Map<String, Object>> likePost(@RequestParam("id") Long postId,
-            @RequestParam("like") boolean like, HttpServletRequest request) {
+                                                        @RequestParam("like") boolean like, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Account currAccount = accountService.findByEmail(session.getAttribute("username").toString());
         Post post = postService.getPostById(postId);
@@ -151,8 +158,8 @@ public class HomePageController {
 
     @PostMapping("/createComment")
     public ResponseEntity<Map<String, Object>> createComment(@RequestParam("postId") Long postId,
-            @RequestParam("comment") String comment,
-            HttpServletRequest request) {
+                                                             @RequestParam("comment") String comment,
+                                                             HttpServletRequest request) {
         HttpSession session = request.getSession();
         Account currAccount = accountService.findByEmail(session.getAttribute("username").toString());
         Post post = postService.getPostById(postId);

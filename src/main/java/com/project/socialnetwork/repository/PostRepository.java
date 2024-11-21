@@ -14,4 +14,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(value = "SELECT p.* FROM posts p JOIN accounts a ON p.account_id = a.id WHERE CONCAT(p.title, a.username) LIKE CONCAT('%', :keyword, '%')", nativeQuery = true)
     java.util.List<Post> search(@Param("keyword") String keyword);
+
+    @Query(value = "SELECT * FROM posts WHERE account_id = :accountId", nativeQuery = true)
+    java.util.List<Post> findByAccountId(@Param("accountId") Long accountId);
 }

@@ -32,7 +32,6 @@ build/
 
 ### VS Code ###
 .vscode/
-
 /src/main/webapp/resources/images/post/
 src/main/resources/application.properties
-
+/src/main/webapp/resources/images/avatar/
