@@ -27,13 +27,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletContext;
 
 @Service
-public class TagDetectionService {
+public class ContentDetectionService {
     @Autowired
     private ServletContext servletContext;
     @Autowired
     private Environment environment;
 
-    public List<String> getTags(String response) {
+    public String getContent(String response) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(response);
@@ -48,7 +48,7 @@ public class TagDetectionService {
                     tags.add(tag);
                 }
             }
-            return tags;
+            return "This post may be contains " + tags.toString();
         } catch (JsonMappingException e) {
             e.printStackTrace();
         } catch (JsonProcessingException e) {

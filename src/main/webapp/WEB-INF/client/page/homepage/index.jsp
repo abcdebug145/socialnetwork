@@ -150,8 +150,7 @@
                         height = maxHeight;
                         width = maxHeight * aspectRatio;
                     }
-                }
-
+                }                
                 img.src = event.target.result;
                 img.width = width;
                 img.height = height;
@@ -163,7 +162,6 @@
         // Read the uploaded file as a data URL
         fileReader.readAsDataURL(imgToUpload);
     }
-
     function likePost(postId) {
         <c:if test="${empty pageContext.request.userPrincipal}">
         document.querySelector('#open-form-login').click();
@@ -208,6 +206,30 @@
                 console.error('Error:', error);
             });
     }
+    function submitComment(message, postId) {
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch('/createComment?postId=' + postId + '&comment=' + message, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                //return response.json();
+            })
+            .then(data => {
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
 </script>
 </body>
 
