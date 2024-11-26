@@ -9,7 +9,7 @@
             <a href="/" title="Home" class="list-group-item list-group-item-action ">
                 <i class="bi bi-house fs-1"></i>
             </a>
-            <a href="/profile/edit-profile" title="Your Profile" class="list-group-item list-group-item-action ">
+            <a href="/profile/${account.username}" title="Your Profile" class="list-group-item list-group-item-action ">
                 <i class="bi bi-person-circle fs-1"></i>
             </a>
             <a class="list-group-item list-group-item-action " title="Create Post" data-bs-toggle="modal"

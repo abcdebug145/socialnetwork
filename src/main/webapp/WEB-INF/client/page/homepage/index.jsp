@@ -73,7 +73,7 @@
                                     <div class="position-absolute bottom-0 pb-5 col-12">
                                         <!-- <form:form action="/createComment" method="post"> -->
                                         <input type="hidden" name="postId" value="${post.id}">
-                                        <div class="form-group">
+                                        <div class="form-group mt-auto">
                                             <input type="text" class="form-control" name="comment" id="${post.id}"
                                                 rows="3" placeholder="Write a comment"></input>
                                         </div>
