@@ -1,5 +1,6 @@
 package com.project.socialnetwork.service;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +24,7 @@ public class CommentService {
         for (Comment comment : comments) {
             comment.setTimeAgo(calculateTimeAgo(comment.getDate()));
         }
+        Collections.reverse(comments);
         return comments;
     }
 

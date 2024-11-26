@@ -12,10 +12,10 @@ import jakarta.servlet.ServletContext;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class UploadService {
+public class ImageService {
     private final ServletContext servletContext;
 
-    public UploadService(ServletContext servletContext) {
+    public ImageService(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 
@@ -44,5 +44,15 @@ public class UploadService {
             e.printStackTrace();
         }
         return imgFileName;
+    }
+
+    public void removeImage(String imageName, String targetFolder) {
+        String imagePath = this.servletContext.getRealPath("/resources/images/" + targetFolder + "/" + imageName);
+        try {
+            File file = new File(imagePath);
+            file.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

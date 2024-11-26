@@ -3,6 +3,7 @@ package com.project.socialnetwork.domain;
 import java.util.Date;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -37,14 +38,18 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
+    @JsonBackReference
     private Account account;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+    @JsonBackReference
     private Set<PostLiked> postLikeds;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+    @JsonBackReference
     private Set<Comment> comments;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+    @JsonBackReference
     private Set<Notification> notifications;
 }

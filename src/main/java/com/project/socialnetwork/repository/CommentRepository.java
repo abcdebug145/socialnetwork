@@ -11,4 +11,6 @@ import com.project.socialnetwork.domain.Post;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByPost(Post post);
+
+    void deleteCommentsByPost(Post post);
 }

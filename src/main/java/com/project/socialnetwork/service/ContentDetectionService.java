@@ -48,7 +48,7 @@ public class ContentDetectionService {
                     tags.add(tag);
                 }
             }
-            return "This post may be contains " + tags.toString();
+            return tags.toString();
         } catch (JsonMappingException e) {
             e.printStackTrace();
         } catch (JsonProcessingException e) {
@@ -87,6 +87,79 @@ public class ContentDetectionService {
         try (OutputStream outputStream = connection.getOutputStream();
                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8),
                         true)) {
+
+            // Add the file part
+            writer.append("--").append(boundary).append("\r\n");
+            writer.append("Content-Disposition: form-data; name=\"image\"; filename=\"").append(imageFile.getName())
+                    .append("\"\r\n");
+            writer.append("Content-Type: ").append("image/jpeg").append("\r\n");
+            writer.append("\r\n").flush();
+
+            // Read file and write its content to output stream
+            try (FileInputStream fileInputStream = new FileInputStream(imageFile)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                outputStream.flush();
+            }
+
+            // End of multipart form data
+            writer.append("\r\n").append("--").append(boundary).append("--").append("\r\n").flush();
+        }
+
+        // Get response code and response message
+        int responseCode = connection.getResponseCode();
+        System.out.println("Response Code : " + responseCode);
+
+        // Read the JSON response
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            String inputLine;
+            StringBuilder jsonResponse = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                jsonResponse.append(inputLine);
+            }
+
+            System.out.println("Response: " + jsonResponse.toString());
+            return jsonResponse.toString();
+        } finally {
+            connection.disconnect();
+        }
+    }
+
+    public String getJsonResponseForTest(String imageName) throws IOException {
+        String apiKey = environment.getProperty("env.data.apiKey");
+        String apiSecret = environment.getProperty("env.data.apiSecret");
+
+        // Encode the credentials to Base64
+        String credentialsToEncode = apiKey + ":" + apiSecret;
+        String basicAuth = Base64.getEncoder().encodeToString(credentialsToEncode.getBytes(StandardCharsets.UTF_8));
+
+        // Imagga endpoint for uploading image
+        String endpointUrl = "https://api.imagga.com/v2/tags";
+
+        // Path to your local image file
+        String pathName = "C:\\Users\\scamq\\OneDrive\\Desktop\\autumn\\" + imageName;
+//        String pathName = this.servletContext.getRealPath("/resources/images/post/" + imageName);
+        File imageFile = new File(pathName);
+
+        // Set up connection
+        URL urlObject = new URL(endpointUrl);
+        HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Authorization", "Basic " + basicAuth);
+
+        // Set the content type to multipart/form-data
+        String boundary = "----WebKitFormBoundary" + System.currentTimeMillis();
+        connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+        connection.setDoOutput(true);
+
+        // Write the file content to the output stream
+        try (OutputStream outputStream = connection.getOutputStream();
+             PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8),
+                     true)) {
 
             // Add the file part
             writer.append("--").append(boundary).append("\r\n");

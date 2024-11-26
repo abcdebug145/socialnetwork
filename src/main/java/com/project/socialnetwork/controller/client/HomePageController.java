@@ -1,11 +1,8 @@
 package com.project.socialnetwork.controller.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +18,7 @@ import com.project.socialnetwork.service.AccountService;
 import com.project.socialnetwork.service.CommentService;
 import com.project.socialnetwork.service.NotificationService;
 import com.project.socialnetwork.service.PostService;
-import com.project.socialnetwork.service.UploadService;
+import com.project.socialnetwork.service.ImageService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -32,7 +29,7 @@ import lombok.AllArgsConstructor;
 public class HomePageController {
 
     private final PostService postService;
-    private final UploadService uploadService;
+    private final ImageService imageService;
     private final AccountService accountService;
     private final NotificationService notificationService;
     private final CommentService commentService;
@@ -54,12 +51,12 @@ public class HomePageController {
         }
         List<Post> posts = (keyword.isPresent()) ? postService.getAllPosts(currAccount, keyword.get())
                 : postService
-                .getAllPosts(currAccount, "");
+                        .getAllPosts(currAccount, "");
+//        List<Post> posts = postService.getPosts(0, 40);
         if (postId.isPresent()) {
             Post post = postService.getPostById(postId.get());
             List<Comment> comments = commentService.getAllComment(post);
-            // List<Tag> tags = postService.getAllTagsByPost(post);
-            // posts = postService.getAllSimilarPosts(tags);
+            posts = postService.getAllSimilarPosts(post);
             model.addAttribute("post", post);
             model.addAttribute("comments", comments);
         }
@@ -72,10 +69,17 @@ public class HomePageController {
         return "client/page/homepage/index";
     }
 
+    @GetMapping("/loadMorePosts")
+    public ResponseEntity<List<Post>> loadMorePosts(@RequestParam("page") int page, @RequestParam("size") int size) {
+        List<Post> posts = postService.getPosts(page, size);
+//        List<Post> posts = postService.getAllPosts(null, "");
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(posts);
+    }
+
     @PostMapping("/create-post")
     public String createPost(@ModelAttribute("newPost") Post post, @RequestParam("postFile") MultipartFile file,
-                             HttpServletRequest request) {
-        String imgPath = uploadService.saveUploadFile(file, "post");
+            HttpServletRequest request) {
+        String imgPath = imageService.saveUploadFile(file, "post");
         post.setImage(imgPath);
         post.setLikeCount(0);
         HttpSession session = request.getSession();
@@ -145,15 +149,15 @@ public class HomePageController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/deletePost")
-    public ResponseEntity<Map<String, Object>> deletePost(@RequestParam("id") Long postId) {
-        Post post = postService.getPostById(postId);
-        postService.savePost(post);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        return ResponseEntity.ok(response);
-    }
+//    @PostMapping("/deletePost")
+//    public ResponseEntity<Map<String, Object>> deletePost(@RequestParam("id") Long postId) {
+//        Post post = postService.getPostById(postId);
+//        postService.savePost(post);
+//
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("success", true);
+//        return ResponseEntity.ok(response);
+//    }
 
     @PostMapping("/createComment")
     public ResponseEntity<Map<String, Object>> createComment(@RequestParam("postId") Long postId,
@@ -165,7 +169,15 @@ public class HomePageController {
         postService.createComment(comment, currAccount, post);
         notificationService.createNotification(currAccount, post, "comment");
         Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
+        response.put("username", currAccount.getUsername());
+        response.put("content", comment);
+        response.put("time", new Date());
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/post/delete/{id}")
+    public String deletePost(@PathVariable("id") Long id) {
+        postService.deletePost(id);
+        return "redirect:/";
     }
 }

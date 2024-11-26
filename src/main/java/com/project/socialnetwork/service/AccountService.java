@@ -3,9 +3,6 @@ package com.project.socialnetwork.service;
 import java.io.File;
 import java.util.List;
 
-import com.project.socialnetwork.domain.Comment;
-import com.project.socialnetwork.domain.Post;
-import com.project.socialnetwork.repository.CommentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,14 +19,14 @@ import jakarta.servlet.ServletContext;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final PostLikedRepository postLikedRepository;
-    private final UploadService uploadService;
+    private final ImageService uploadService;
     private final ServletContext servletContext;
 
     public AccountService(AccountRepository accountRepository, PostLikedRepository postLikedRepository,
-            UploadService uploadService, ServletContext servletContext) {
+                          ImageService imageService, ServletContext servletContext) {
         this.accountRepository = accountRepository;
         this.postLikedRepository = postLikedRepository;
-        this.uploadService = uploadService;
+        this.uploadService = imageService;
         this.servletContext = servletContext;
     }
 

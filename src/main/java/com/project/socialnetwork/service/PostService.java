@@ -1,10 +1,11 @@
 package com.project.socialnetwork.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.project.socialnetwork.domain.Account;
@@ -22,13 +23,15 @@ public class PostService {
     private final PostLikedRepository postLikedRepository;
     private final CommentRepository commentRepository;
     private final ContentDetectionService contentDetectionService;
+    private final ImageService imageService;
 
     public PostService(PostRepository postRepository, PostLikedRepository postLikedRepository,
-                       CommentRepository commentRepository, ContentDetectionService contentDetectionService) {
+                       CommentRepository commentRepository, ContentDetectionService contentDetectionService, ImageService imageService) {
         this.postRepository = postRepository;
         this.postLikedRepository = postLikedRepository;
         this.commentRepository = commentRepository;
         this.contentDetectionService = contentDetectionService;
+        this.imageService = imageService;
     }
 
     public List<Post> getAllPosts(Account currAccount, String keyword) {
@@ -37,6 +40,7 @@ public class PostService {
             posts = postRepository.search(keyword);
         else
             posts = postRepository.findAll();
+        Collections.shuffle(posts);
         if (currAccount != null) {
             List<Post> temp = new ArrayList<>();
             Iterator<Post> iterator = posts.iterator();
@@ -47,16 +51,26 @@ public class PostService {
                     iterator.remove();
                 }
             }
-
             posts.addAll(temp);
         }
         return posts;
     }
 
-    public List<Post> getAllPostsByAccount(Account account) {
-        return postRepository.findByAccountId(account.getId());
+    public List<Post> getAllSimilarPosts(Post post) {
+        Set<String> postContent;
+        if (post.getContent() != null) {
+            postContent = new HashSet<>(Arrays.asList(post.getContent()
+                    .replaceAll("[\\[\\]]", "").split(",\\s*")));
+        } else {
+            postContent = new HashSet<>();
+        }
+        List<Post> postList = postRepository.findAll();
+        List<Post> similarPosts = postList.stream()
+                .filter(p -> postContent.stream().anyMatch(content -> p.getContent() != null && p.getContent().contains(content)))
+                .collect(Collectors.toList());
+        Collections.shuffle(similarPosts);
+        return similarPosts;
     }
-
 
     public Post getPostById(Long id) {
         return postRepository.findById(id).orElse(null);
@@ -97,5 +111,17 @@ public class PostService {
         comment.setAccount(account);
         comment.setPost(post);
         commentRepository.save(comment);
+    }
+
+    public void deletePost(Long id) {
+        postRepository.deleteById(id);
+        commentRepository.deleteCommentsByPost(getPostById(id));
+        postLikedRepository.deleteByPostId(id);
+        imageService.removeImage(getPostById(id).getImage(), "post");
+    }
+
+    public List<Post> getPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return postRepository.findAll(pageable).getContent();
     }
 }
