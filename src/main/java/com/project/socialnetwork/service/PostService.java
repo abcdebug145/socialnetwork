@@ -56,6 +56,10 @@ public class PostService {
         return posts;
     }
 
+    public List<Post> getAllPostsByAccount(Account account) {
+        return postRepository.findByAccountId(account.getId());
+    }
+
     public List<Post> getAllSimilarPosts(Post post) {
         Set<String> postContent;
         if (post.getContent() != null) {
