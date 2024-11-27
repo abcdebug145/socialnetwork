@@ -1,22 +1,12 @@
 package com.project.socialnetwork.controller.client;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.socialnetwork.domain.Account;
@@ -26,9 +16,9 @@ import com.project.socialnetwork.domain.Post;
 import com.project.socialnetwork.domain.PostLiked;
 import com.project.socialnetwork.service.AccountService;
 import com.project.socialnetwork.service.CommentService;
-import com.project.socialnetwork.service.ImageService;
 import com.project.socialnetwork.service.NotificationService;
 import com.project.socialnetwork.service.PostService;
+import com.project.socialnetwork.service.ImageService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -46,56 +36,44 @@ public class HomePageController {
 
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request,
-            @RequestParam("keyword") Optional<String> keyword) {
+                              @RequestParam("keyword") Optional<String> keyword, @RequestParam("postId") Optional<Long> postId) {
         Post newPost = new Post();
-        postService.getShuffledList();
+        List<PostLiked> postLiked = new ArrayList<PostLiked>();
         List<Notification> notifications = new ArrayList<>();
         Account currAccount = null;
         HttpSession session = request.getSession();
         if (session.getAttribute("username") != null) {
-            currAccount = accountService.findByEmail(session.getAttribute("username").toString());
+            String username = session.getAttribute("username").toString();
+            currAccount = accountService.findByEmail(username);
+            postLiked = accountService.getPostsLiked(currAccount.getId());
             notifications = notificationService.getAllNotifications(currAccount.getId());
             currAccount.setUnreadNoti(notifications.size());
         }
-
-        if (keyword.isPresent()) {
-            model.addAttribute("listPost", postService.getAllPosts(currAccount, keyword.get()));
+        List<Post> posts = (keyword.isPresent()) ? postService.getAllPosts(currAccount, keyword.get())
+                : postService
+                        .getAllPosts(currAccount, "");
+//        List<Post> posts = postService.getPosts(0, 40);
+        if (postId.isPresent()) {
+            Post post = postService.getPostById(postId.get());
+            List<Comment> comments = commentService.getAllComment(post);
+            posts = postService.getAllSimilarPosts(post);
+            model.addAttribute("post", post);
+            model.addAttribute("comments", comments);
         }
-
+        model.addAttribute("listPost", posts);
         model.addAttribute("newPost", newPost);
+        model.addAttribute("postLiked", postLiked);
         model.addAttribute("account", currAccount);
         model.addAttribute("keyword", keyword.isPresent() ? keyword.get() : "");
         model.addAttribute("notifications", notifications);
         return "client/page/homepage/index";
     }
 
-    @GetMapping("/post/{id}")
-    public String getDetailPost(Model model, @PathVariable("id") Long id, HttpServletRequest request) {
-        Post post = postService.getPostById(id);
-        List<Comment> comments = commentService.getAllComment(post);
-        List<Post> similarPosts = postService.getAllSimilarPosts(post);
-
-        model.addAttribute("post", post);
-        model.addAttribute("comments", comments);
-        model.addAttribute("listPost", similarPosts);
-        return "client/page/homepage/view-post";
-    }
-
     @GetMapping("/loadMorePosts")
-    public ResponseEntity<List<Post>> loadMorePosts(@RequestParam("page") long page, @RequestParam("size") int size,
-            HttpServletRequest request) {
-        long maxPage = (long) Math.ceil((double) (postService.getMaxPage() / 40));
-        List<Post> posts = postService.getPosts((int) (page % maxPage), size);
+    public ResponseEntity<List<Post>> loadMorePosts(@RequestParam("page") int page, @RequestParam("size") int size) {
+        List<Post> posts = postService.getPosts(page, size);
+//        List<Post> posts = postService.getAllPosts(null, "");
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(posts);
-    }
-
-    @GetMapping("/getPostLikedByAccount")
-    public ResponseEntity<List<PostLiked>> getPostLikedByAccount(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String username = session.getAttribute("username").toString();
-        Account currAccount = accountService.findByEmail(username);
-        List<PostLiked> postLikeds = accountService.getPostsLiked(currAccount.getId());
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postLikeds);
     }
 
     @PostMapping("/create-post")
@@ -112,9 +90,10 @@ public class HomePageController {
     }
 
     @GetMapping("/profile/{username}")
-    public String getProfilePage(Model model, @PathVariable("username") String username) {
+    public String getProfilePage(Model model, @PathVariable("username") String username, HttpServletRequest request) {
+        HttpSession session = request.getSession();
         Account account = accountService.findByUsername(username);
-        List<Post> posts = postService.getPostsByAccount(account);
+        List<Post> posts = postService.getAllPostsByAccount(account);
         model.addAttribute("account", account);
         model.addAttribute("listPost", posts);
         return "client/page/user/user-profile";
@@ -131,7 +110,7 @@ public class HomePageController {
 
     @PostMapping("/profile/edit-profile")
     public String saveProfile(@ModelAttribute("account") Account account, HttpServletRequest request,
-            @RequestParam("avatarFile") MultipartFile avatar) {
+                              @RequestParam("avatarFile") MultipartFile avatar) {
         HttpSession session = request.getSession();
         String username = session.getAttribute("username").toString();
         Account currAccount = accountService.findByEmail(username);
@@ -155,7 +134,7 @@ public class HomePageController {
 
     @PostMapping("/likePost")
     public ResponseEntity<Map<String, Object>> likePost(@RequestParam("id") Long postId,
-            @RequestParam("like") boolean like, HttpServletRequest request) {
+                                                        @RequestParam("like") boolean like, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Account currAccount = accountService.findByEmail(session.getAttribute("username").toString());
         Post post = postService.getPostById(postId);
@@ -170,21 +149,20 @@ public class HomePageController {
         return ResponseEntity.ok(response);
     }
 
-    // @PostMapping("/deletePost")
-    // public ResponseEntity<Map<String, Object>> deletePost(@RequestParam("id")
-    // Long postId) {
-    // Post post = postService.getPostById(postId);
-    // postService.savePost(post);
-    //
-    // Map<String, Object> response = new HashMap<>();
-    // response.put("success", true);
-    // return ResponseEntity.ok(response);
-    // }
+//    @PostMapping("/deletePost")
+//    public ResponseEntity<Map<String, Object>> deletePost(@RequestParam("id") Long postId) {
+//        Post post = postService.getPostById(postId);
+//        postService.savePost(post);
+//
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("success", true);
+//        return ResponseEntity.ok(response);
+//    }
 
     @PostMapping("/createComment")
     public ResponseEntity<Map<String, Object>> createComment(@RequestParam("postId") Long postId,
-            @RequestParam("comment") String comment,
-            HttpServletRequest request) {
+                                                             @RequestParam("comment") String comment,
+                                                             HttpServletRequest request) {
         HttpSession session = request.getSession();
         Account currAccount = accountService.findByEmail(session.getAttribute("username").toString());
         Post post = postService.getPostById(postId);

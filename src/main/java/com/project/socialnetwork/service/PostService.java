@@ -1,15 +1,11 @@
 package com.project.socialnetwork.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.project.socialnetwork.domain.Account;
@@ -30,17 +26,12 @@ public class PostService {
     private final ImageService imageService;
 
     public PostService(PostRepository postRepository, PostLikedRepository postLikedRepository,
-            CommentRepository commentRepository, ContentDetectionService contentDetectionService,
-            ImageService imageService) {
+                       CommentRepository commentRepository, ContentDetectionService contentDetectionService, ImageService imageService) {
         this.postRepository = postRepository;
         this.postLikedRepository = postLikedRepository;
         this.commentRepository = commentRepository;
         this.contentDetectionService = contentDetectionService;
         this.imageService = imageService;
-    }
-
-    public List<Post> getShuffledList() {
-        return postRepository.getRandomPosts();
     }
 
     public List<Post> getAllPosts(Account currAccount, String keyword) {
@@ -79,8 +70,7 @@ public class PostService {
         }
         List<Post> postList = postRepository.findAll();
         List<Post> similarPosts = postList.stream()
-                .filter(p -> postContent.stream()
-                        .anyMatch(content -> p.getContent() != null && p.getContent().contains(content)))
+                .filter(p -> postContent.stream().anyMatch(content -> p.getContent() != null && p.getContent().contains(content)))
                 .collect(Collectors.toList());
         Collections.shuffle(similarPosts);
         return similarPosts;
@@ -135,15 +125,7 @@ public class PostService {
     }
 
     public List<Post> getPosts(int page, int size) {
-        List<Post> allPosts = getShuffledList();
-        return allPosts.subList((page - 1) * size, page * size);
-    }
-
-    public long getMaxPage() {
-        return postRepository.count();
-    }
-
-    public List<Post> getPostsByAccount(Account account) {
-        return postRepository.findByAccountId(account.getId());
+        Pageable pageable = PageRequest.of(page, size);
+        return postRepository.findAll(pageable).getContent();
     }
 }
