@@ -2,6 +2,8 @@ package com.project.socialnetwork.domain;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,9 +35,11 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @JsonIncludeProperties({ "id", "title" })
     private Post post;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @JsonIncludeProperties({ "id", "username" })
     private Account account;
 }

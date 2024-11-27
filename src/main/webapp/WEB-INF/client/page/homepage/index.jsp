@@ -56,13 +56,37 @@
                 <!-- End custom js for this page-->
 
                 <script>
-                    document.getElementsByName('comment')[0].addEventListener('keypress', function (e) {
-                        if (e.key === 'Enter') {
-                            var message = document.getElementsByName('comment')[0].value;
-                            var postId = document.getElementById('${post.id}').getAttribute('id');
-                            submitComment(message, postId);
-                            document.getElementsByName('comment')[0].value = "";
-                        }
+                    $(document).ready(function () {
+                        $('input[name="comment"]').keypress(function (event) {
+
+                            if (event.which === 13) { // Enter key pressed
+                                //if (${empty sessionScope.username}) {
+                                alert('Please login to comment');
+                                // document.querySelector('#open-form-login').click();
+                                // return;
+                                //}
+                                event.preventDefault(); // Prevent the default form submission
+
+                                var postId = $(this).attr('id');
+                                var comment = $(this).val();
+
+                                $.ajax({
+                                    url: '/createComment?postId=' + postId + '&comment=' + comment,
+                                    type: 'POST',
+                                    success: function (response) {
+                                        var newCommentHtml = '<div style="display: flex; justify-content: space-between;">' +
+                                            '<p><strong>' + response.username + ':</strong> ' + response.content + '</p>' +
+                                            '<h6 name="date-comment" id="' + response.time + '">' + 'Just now' + '</h6>' +
+                                            '</div>';
+                                        $('.comments-section').prepend(newCommentHtml);
+                                        $('input[name="comment"]').val('');
+                                    },
+                                    error: function (error) {
+                                        console.error('Error submitting comment:', error);
+                                    }
+                                });
+                            }
+                        });
                     });
 
                     function uploadImage(imgToUpload) {

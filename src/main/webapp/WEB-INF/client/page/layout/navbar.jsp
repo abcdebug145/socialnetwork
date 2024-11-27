@@ -128,18 +128,6 @@
             </div>
 
             <script>
-                document.addEventListener("")
-
-                function ChangeCurrentActive(object) {
-                    var obj = document.querySelector(".active");
-                    if (obj) {
-                        obj.style.fontWeight = 400;
-                        obj.classList.remove("active");
-                    }
-                    object.classList.add("active");
-                    object.style.fontWeight = 600;
-                }
-
                 function login() {
                     const username = document.getElementById('form2Example11').value;
                     const password = document.getElementById('form2Example22').value;

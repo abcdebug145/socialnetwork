@@ -55,15 +55,6 @@
                     integrity="sha384-tsQFqpERiu9W1NUMXXfO5pLnAM6ScJS/6aINHpqlnqu8qZWjW0k6ujUib3WTOE6s"
                     crossorigin="anonymous"></script>
                 <script>
-                    document.getElementsByName('comment')[0].addEventListener('keypress', function (e) {
-                        if (e.key === 'Enter') {
-                            var message = document.getElementsByName('comment')[0].value;
-                            var postId = document.getElementById('${post.id}').getAttribute('id');
-                            submitComment(message, postId);
-                            document.getElementsByName('comment')[0].value = "";
-                        }
-                    });
-
                     function submitComment(message, postId) {
                         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
                         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
