@@ -1,7 +1,5 @@
 $(document).ready(function () {
     $('.btn-change-status').click(function (event) {
-        alert("Change status");
-
         var selectedId = $(this).attr("id-account");
         var currStatus = $(this).attr("curr-status") == 'ACTIVE' ? 1 : 2;
         var currSpan = $(this).closest('tr').find('td:has(span[data-bs-toggle="tooltip"])');
@@ -27,24 +25,4 @@ $(document).ready(function () {
             }
         });
     });
-
-    // $('.btn-like').click(function (event) {
-    //     var postId = $(this).attr("data-post-id");
-    //     var likeCountElem = $(this).closest('.post').find('.like-count');
-    //     var likeCount = parseInt(likeCountElem.text());
-
-    //     $.ajax({
-    //         url: '/api/like-post?id=' + postId,
-    //         type: 'POST',
-    //         success: function (response) {
-    //             if (response.liked) {
-    //                 likeCountElem.text(likeCount + 1);
-    //                 $(this).addClass('liked');
-    //             } else {
-    //                 likeCountElem.text(likeCount - 1);
-    //                 $(this).removeClass('liked');
-    //             }
-    //         }.bind(this)
-    //     });
-    // });
 });

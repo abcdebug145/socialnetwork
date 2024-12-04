@@ -3,32 +3,16 @@
         <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
             <nav class="navbar navbar-expand-lg bg-body-tertiary fs-5">
                 <div class="container-fluid">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" fill="currentColor"
-                        class="bi bi-image pt-2">
-                        <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                        <path
-                            d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z" />
-                    </svg>
-                    <a class="navbar-brand" href="#">SN</a>
+                    <a class="navbar-brand" href="/">
+                        <img src="/images/dashboard/logo.png" alt="asdasd"
+                            style="width: 45px; height: 45px; margin-left: 30px; margin-right: 15px;">
+                        Social Network</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link rounded-pill" aria-current="page" href="#"
-                                    onclick="ChangeCurrentActive(this)">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link rounded-pill" href="#" onclick="ChangeCurrentActive(this)">Watch</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link rounded-pill" href="#"
-                                    onclick="ChangeCurrentActive(this)">Explore</a>
-                            </li>
-                        </ul>
                         <form class="d-flex col-6 mx-auto" role="search" action="/" method="GET"
                             modelAttribute="keyword">
                             <div class="input-group">

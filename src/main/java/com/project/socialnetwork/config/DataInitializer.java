@@ -24,8 +24,8 @@ public class DataInitializer {
     CommandLineRunner initData() {
         return args -> {
             // Insert default values into the table
-            roleRepository.save(new Role(1L, "Admin", "ADMIN can do anything"));
-            roleRepository.save(new Role(2L, "User",
+            roleRepository.save(new Role(1L, "ADMIN", "ADMIN can do anything"));
+            roleRepository.save(new Role(2L, "USER",
                     "USER can post their image, view other's posts and interact such as like, download image"));
 
             statusRepository.save(new AccountStatus(1L, "ACTIVE"));

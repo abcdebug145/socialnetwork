@@ -23,6 +23,10 @@ import jakarta.servlet.DispatcherType;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
 
+	private static final String[] PERMITTED_URL = { "/", "/login", "/register", "/client/**", "/css/**",
+			"/js/**", "/images/**", "/api/v1/posts/**", "/loadMorePosts", "/topic/notifications", "/webjars/**",
+			"/app.js", "/topic/**" };
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -50,8 +54,7 @@ public class SecurityConfiguration {
 				.authorizeHttpRequests(authorize -> authorize
 						.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE)
 						.permitAll()
-						.requestMatchers("/", "/login", "/register", "/client/**", "/css/**",
-								"/js/**", "/images/**", "/api/v1/posts/**", "/loadMorePosts")
+						.requestMatchers(PERMITTED_URL)
 						.permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.anyRequest().authenticated())
@@ -70,9 +73,9 @@ public class SecurityConfiguration {
 						.defaultSuccessUrl("/", true)
 						.successHandler(customAuthenticationSuccessHandler())
 						.failureHandler(authenticationFailureHandler())
-						.permitAll());
-		// .exceptionHandling(ex -> ex
-		// .accessDeniedPage("/page-not-found"));
+						.permitAll())
+		 .exceptionHandling(ex -> ex
+		 .accessDeniedPage("/page-not-found"));
 		return http.build();
 	}
 

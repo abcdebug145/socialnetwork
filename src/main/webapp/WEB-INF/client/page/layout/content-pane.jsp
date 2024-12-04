@@ -5,8 +5,6 @@
                 <html>
 
                 <head>
-                    <meta name="_csrf" content="${_csrf.token}">
-                    <meta name="_csrf.header" content="${_csrf.headerName}">
                     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
                         rel="stylesheet"
                         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
@@ -30,13 +28,14 @@
                                             </a>
                                             <div style="font-size: 12px;">
                                                 by @<a href="/profile/${post.account.username}"
-                                                    style="text-decoration: none;">${post.account.username}</a>
+                                                    style="text-decoration: none;"
+                                                    class="post-owner">${post.account.username}</a>
                                             </div>
                                             <hr>
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="d-flex align-items-center">
                                                     <button style="background: none; border: none; cursor: pointer;"
-                                                        onclick='likePost("${post.id}")'>
+                                                        class="button-like">
                                                         <c:set var="liked" value="false" />
                                                         <c:forEach var="i" items="${postLiked}">
                                                             <c:if test="${i.post.id == post.id}">
@@ -60,10 +59,36 @@
                                                         ${post.likeCount}
                                                     </h5>
                                                 </div>
-                                                <button class="btn btn-outline-secondary btn-sm"
-                                                    onclick="downloadImg()">
-                                                    <i class="bi bi-download"></i> Download
-                                                </button>
+                                                <div class="d-flex align-items-center m-0">
+                                                    <button class="btn btn-outline-secondary btn-sm"
+                                                        onclick="downloadImg()">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            fill="currentColor" class="bi bi-download"
+                                                            viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                                                            <path
+                                                                d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />
+                                                        </svg>
+                                                    </button>
+                                                    <c:if test="${account.email==sessionScope.username}">
+                                                        <form:form action="/delete-post/${post.id}" method="post"
+                                                            id="delete-post-form">
+                                                            <button class="btn btn-outline-secondary btn-sm"
+                                                                onclick="deletePost('${post.id}'), preventDefault()"
+                                                                type="submit">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                    height="16" fill="currentColor" class="bi bi-trash"
+                                                                    viewBox="0 0 16 16">
+                                                                    <path
+                                                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                                    <path
+                                                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                                                </svg>
+                                                            </button>
+                                                        </form:form>
+                                                    </c:if>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -80,6 +105,13 @@
                     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
                         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8= sha256-T+aPohYXbm0fRYDpJLr+zJ9RmYTswGsahAoIsNiMld4="
                         crossorigin="anonymous"></script>
+                    <script>
+                        function deletePost(postId) {
+                            if (confirm("Are you sure you want to delete this post?")) {
+                                document.forms["delete-post-form"].submit();
+                            }
+                        }
+                    </script>
                 </body>
 
                 </html>

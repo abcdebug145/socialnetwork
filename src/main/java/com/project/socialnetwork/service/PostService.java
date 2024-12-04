@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.project.socialnetwork.repository.NotificationRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.project.socialnetwork.domain.Account;
@@ -28,15 +30,17 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final ContentDetectionService contentDetectionService;
     private final ImageService imageService;
+    private final NotificationRepository notificationRepository;
 
     public PostService(PostRepository postRepository, PostLikedRepository postLikedRepository,
-            CommentRepository commentRepository, ContentDetectionService contentDetectionService,
-            ImageService imageService) {
+                       CommentRepository commentRepository, ContentDetectionService contentDetectionService,
+                       ImageService imageService, NotificationRepository notificationRepository) {
         this.postRepository = postRepository;
         this.postLikedRepository = postLikedRepository;
         this.commentRepository = commentRepository;
         this.contentDetectionService = contentDetectionService;
         this.imageService = imageService;
+        this.notificationRepository = notificationRepository;
     }
 
     public List<Post> getShuffledList() {
@@ -127,11 +131,20 @@ public class PostService {
         commentRepository.save(comment);
     }
 
+    @Transactional
     public void deletePost(Long id) {
-        postRepository.deleteById(id);
-        commentRepository.deleteCommentsByPost(getPostById(id));
-        postLikedRepository.deleteByPostId(id);
-        imageService.removeImage(getPostById(id).getImage(), "post");
+        Post post = postRepository.findById(id).orElse(null);
+        try {
+            if (post != null) {
+                postLikedRepository.deleteByPost(post);
+                commentRepository.deleteByPost(post);
+                notificationRepository.deleteByPost(post);
+                imageService.removeImage(getPostById(id).getImage(), "post");
+                postRepository.delete(post);
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR: "+e.getMessage());
+        }
     }
 
     public List<Post> getPosts(int page, int size) {

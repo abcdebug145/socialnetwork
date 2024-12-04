@@ -27,6 +27,10 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
+        if (account.getStatus().getName().equals("BANNED")) {
+            throw new UsernameNotFoundException("User is banned");
+        }
+
         return new User(account.getEmail(), account.getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + account.getRole().getName())));
     }

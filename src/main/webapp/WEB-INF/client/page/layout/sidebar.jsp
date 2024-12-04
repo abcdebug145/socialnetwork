@@ -17,8 +17,8 @@
                             href="#CreatePostModal">
                             <i class="bi bi-plus-square fs-1"></i>
                         </a>
-                        <a href="#" class="list-group-item list-group-item-action position-relative"
-                            title="Notifications" onclick="showNotifications()">
+                        <a class="list-group-item list-group-item-action " title="Notification" data-bs-toggle="modal"
+                            href="#NotificationModal">
                             <i class="bi bi-bell fs-1"></i>
                             <c:if test="${account.unreadNoti > 0}">
                                 <span
@@ -28,12 +28,13 @@
                                 </span>
                             </c:if>
                         </a>
-                        <form method="post" action="/logout">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                            <button class="list-group-item list-group-item-action border border-0" title="Logout">
+                        <a href="/logout">
+                            <button class="list-group-item list-group-item-action border border-0" title="Logout"
+                                type="submit">
                                 <i class="bi bi-box-arrow-right" style="font-size: 35px"></i>
                             </button>
-                        </form>
+                        </a>
                     </div>
                 </div>
             </div>
+            <jsp:include page="create-post.jsp" />

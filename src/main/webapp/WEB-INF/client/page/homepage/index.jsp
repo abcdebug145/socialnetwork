@@ -8,12 +8,9 @@
                 <!-- Required meta tags -->
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                <meta name="_csrf" content="${_csrf.token}" />
-                <meta name="_csrf_header" content="${_csrf.headerName}" />
                 <title>Social Network</title>
                 <!-- inject:css -->
                 <!-- endinject -->
-                <link rel="shortcut icon" href="/images/favicon.png" />
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
                     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
                     crossorigin="anonymous">
@@ -23,6 +20,7 @@
             </head>
 
             <body>
+                <input type="hidden" value="${account.username}" id="hidden-username">
                 <div class="container-scroller">
                     <c:choose>
                         <c:when test="${empty pageContext.request.userPrincipal}">
@@ -42,7 +40,6 @@
                                     <div class="home-tab">
                                         <!-- content-here -->
                                         <jsp:include page="../layout/content-pane.jsp"></jsp:include>
-                                        <jsp:include page="../layout/create-post.jsp"></jsp:include>
                                     </div>
                                 </div>
                             </div>
@@ -50,44 +47,16 @@
                     </div>
                 </div>
                 <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-                    integrity="sha384-tsQFqpERiu9W1NUMXXfO5pLnAM6ScJS/6aINHpqlnqu8qZWjW0k6ujUib3WTOE6s"
+                    integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
                     crossorigin="anonymous"></script>
-
-                <!-- End custom js for this page-->
-
+                <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+                <script src="/webjars/jquery/dist/jquery.min.js"></script>
+                <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+                <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+                <script src="/js/app.js"></script>
                 <script>
-                    $(document).ready(function () {
-                        $('input[name="comment"]').keypress(function (event) {
-
-                            if (event.which === 13) { // Enter key pressed
-                                //if (${empty sessionScope.username}) {
-                                alert('Please login to comment');
-                                // document.querySelector('#open-form-login').click();
-                                // return;
-                                //}
-                                event.preventDefault(); // Prevent the default form submission
-
-                                var postId = $(this).attr('id');
-                                var comment = $(this).val();
-
-                                $.ajax({
-                                    url: '/createComment?postId=' + postId + '&comment=' + comment,
-                                    type: 'POST',
-                                    success: function (response) {
-                                        var newCommentHtml = '<div style="display: flex; justify-content: space-between;">' +
-                                            '<p><strong>' + response.username + ':</strong> ' + response.content + '</p>' +
-                                            '<h6 name="date-comment" id="' + response.time + '">' + 'Just now' + '</h6>' +
-                                            '</div>';
-                                        $('.comments-section').prepend(newCommentHtml);
-                                        $('input[name="comment"]').val('');
-                                    },
-                                    error: function (error) {
-                                        console.error('Error submitting comment:', error);
-                                    }
-                                });
-                            }
-                        });
-                    });
 
                     function uploadImage(imgToUpload) {
                         const img = document.getElementById('postPicture');
@@ -127,50 +96,6 @@
                         fileReader.readAsDataURL(imgToUpload);
                     }
 
-                    function likePost(postId) {
-                        <c:if test="${empty pageContext.request.userPrincipal}">
-                            document.querySelector('#open-form-login').click();
-                            return;
-                        </c:if>
-                        const likeBtn = document.getElementById(postId);
-                        const likeCount = likeBtn.parentElement.nextElementSibling;
-                        let count = parseInt(likeCount.textContent);
-                        const liked = likeBtn.classList.contains("like");
-
-                        const csrfParameterName = '${_csrf.parameterName}';
-                        const csrfToken = '${_csrf.token}';
-
-                        fetch('/likePost?id=' + postId + '&like=' + liked, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                if (data.success) {
-                                    if (liked) {
-                                        likeBtn.src = "/images/dashboard/8324235_ui_essential_app_liked_icon.png";
-                                        likeBtn.classList.remove("like");
-                                        likeBtn.classList.add("liked");
-                                        likeCount.textContent = data.likeCount;
-                                    } else {
-                                        likeBtn.src = "/images/dashboard/8324235_ui_essential_app_like_icon.png";
-                                        likeBtn.classList.add("like");
-                                        likeBtn.classList.remove("liked");
-                                        likeCount.textContent = data.likeCount;
-                                    }
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
-                    }
                 </script>
                 <script>
                     $(document).ready(function () {
@@ -291,6 +216,7 @@
                         authorDiv.style.fontSize = '12px';
 
                         const authorLink = document.createElement('a');
+                        authorLink.classList.add('post-owner');
                         authorLink.href = '/profile/' + post.account.username;
                         authorLink.style.textDecoration = 'none';
                         // authorLink.textContent = `@` + post.account.username;
@@ -309,11 +235,13 @@
                         likeContainerDiv.className = 'd-flex align-items-center';
 
                         // Like button
-                        const likeButton = document.createElement('button');
+                        const likeButton = document.createElement('a');
+                        likeButton.type = 'button';
                         likeButton.style.background = 'none';
                         likeButton.style.border = 'none';
                         likeButton.style.cursor = 'pointer';
-                        likeButton.setAttribute('onclick', `likePost("` + post.id + `")`);
+                        likeButton.className = 'button-like';
+                        //likeButton.setAttribute('onclick', 'preventDefault()');
 
                         const likeImg = document.createElement('img');
                         likeImg.width = 30;
@@ -357,8 +285,6 @@
                         cardDiv.appendChild(cardBodyDiv);
 
                         postElement.appendChild(cardDiv);
-                        // postElement.style.height = (imgElement.height + cardBodyDiv.height) + 'px';
-                        // postElement.style.height = '500px';
                         return postElement;
                     }
 

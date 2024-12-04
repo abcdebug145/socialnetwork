@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,22 +46,23 @@ public class HomePageController {
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request,
             @RequestParam("keyword") Optional<String> keyword) {
-        Post newPost = new Post();
-        postService.getShuffledList();
+        List<PostLiked> postLikeds = new ArrayList<>();
         List<Notification> notifications = new ArrayList<>();
         Account currAccount = null;
         HttpSession session = request.getSession();
         if (session.getAttribute("username") != null) {
             currAccount = accountService.findByEmail(session.getAttribute("username").toString());
-            notifications = notificationService.getAllNotifications(currAccount.getId());
+            notifications = notificationService.getAllNotifications(currAccount);
             currAccount.setUnreadNoti(notifications.size());
+            postLikeds = accountService.getPostsLiked(currAccount.getId());
+            model.addAttribute("postLiked", postLikeds);
         }
-
+        notificationService.sendNotification("New user has logged in");
         if (keyword.isPresent()) {
             model.addAttribute("listPost", postService.getAllPosts(currAccount, keyword.get()));
         }
 
-        model.addAttribute("newPost", newPost);
+        model.addAttribute("newPost", new Post());
         model.addAttribute("account", currAccount);
         model.addAttribute("keyword", keyword.isPresent() ? keyword.get() : "");
         model.addAttribute("notifications", notifications);
@@ -71,10 +71,17 @@ public class HomePageController {
 
     @GetMapping("/post/{id}")
     public String getDetailPost(Model model, @PathVariable("id") Long id, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Account currAccount = null;
+        if (session.getAttribute("username") != null) {
+            currAccount = accountService.findByEmail(session.getAttribute("username").toString());
+            model.addAttribute("postLiked", accountService.getPostsLiked(currAccount.getId()));
+        }
         Post post = postService.getPostById(id);
         List<Comment> comments = commentService.getAllComment(post);
         List<Post> similarPosts = postService.getAllSimilarPosts(post);
 
+        model.addAttribute("account", currAccount);
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
         model.addAttribute("listPost", similarPosts);
@@ -112,9 +119,16 @@ public class HomePageController {
     }
 
     @GetMapping("/profile/{username}")
-    public String getProfilePage(Model model, @PathVariable("username") String username) {
+    public String getProfilePage(Model model, @PathVariable("username") String username, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Account currAccount = null;
+        if (session.getAttribute("username") != null) {
+            currAccount = accountService.findByEmail(session.getAttribute("username").toString());
+            model.addAttribute("postLiked", accountService.getPostsLiked(currAccount.getId()));
+        }
         Account account = accountService.findByUsername(username);
         List<Post> posts = postService.getPostsByAccount(account);
+        model.addAttribute("currAccount", currAccount);
         model.addAttribute("account", account);
         model.addAttribute("listPost", posts);
         return "client/page/user/user-profile";
@@ -146,6 +160,15 @@ public class HomePageController {
         return "redirect:/profile/edit-profile";
     }
 
+    @PostMapping("/delete-post/{postId}")
+    public String deletePost(@PathVariable("postId") Long postId, HttpServletRequest request) {
+        Account account = request.getSession().getAttribute("username") != null
+                ? accountService.findByEmail(request.getSession().getAttribute("username").toString())
+                : null;
+        postService.deletePost(postId);
+        return "redirect:/profile/" + account.getUsername();
+    }
+
     @GetMapping("/page-not-found")
     public String getPage() {
         return "client/page/auth/404";
@@ -170,17 +193,6 @@ public class HomePageController {
         return ResponseEntity.ok(response);
     }
 
-    // @PostMapping("/deletePost")
-    // public ResponseEntity<Map<String, Object>> deletePost(@RequestParam("id")
-    // Long postId) {
-    // Post post = postService.getPostById(postId);
-    // postService.savePost(post);
-    //
-    // Map<String, Object> response = new HashMap<>();
-    // response.put("success", true);
-    // return ResponseEntity.ok(response);
-    // }
-
     @PostMapping("/createComment")
     public ResponseEntity<Map<String, Object>> createComment(@RequestParam("postId") Long postId,
             @RequestParam("comment") String comment,
@@ -197,9 +209,4 @@ public class HomePageController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/post/delete/{id}")
-    public String deletePost(@PathVariable("id") Long id) {
-        postService.deletePost(id);
-        return "redirect:/";
-    }
 }

@@ -15,7 +15,6 @@
                 <!-- inject:css -->
                 <link rel="stylesheet" href="/css/style.css">
                 <!-- endinject -->
-                <link rel="shortcut icon" href="/images/favicon.png" />
                 <style>
                     .gradient-custom {
                         /* fallback for old browsers */
@@ -84,7 +83,7 @@
                                                                                         <p class="text-muted">
                                                                                             ${account.address}</p>
                                                                                     </div>
-                                                                
+
                                                                                 </div>
                                                                     </div>
                                                                 </div>

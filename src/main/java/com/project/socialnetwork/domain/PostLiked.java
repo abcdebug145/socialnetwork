@@ -2,7 +2,6 @@ package com.project.socialnetwork.domain;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import jakarta.persistence.Entity;
