@@ -1,4 +1,4 @@
-package com.project.socialnetwork.domain.dto;
+package com.project.socialnetwork.dto;
 
 import java.util.ArrayList;
 import java.util.Map;

@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import com.project.socialnetwork.domain.Account;
-import com.project.socialnetwork.domain.Notification;
-import com.project.socialnetwork.domain.Post;
+import com.project.socialnetwork.entity.Account;
+import com.project.socialnetwork.entity.Notification;
+import com.project.socialnetwork.entity.Post;
 import com.project.socialnetwork.repository.NotificationRepository;
 
 @Service

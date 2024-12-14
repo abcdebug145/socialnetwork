@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.project.socialnetwork.domain.Account;
-import com.project.socialnetwork.domain.Comment;
-import com.project.socialnetwork.domain.Notification;
-import com.project.socialnetwork.domain.Post;
-import com.project.socialnetwork.domain.PostLiked;
+import com.project.socialnetwork.entity.Account;
+import com.project.socialnetwork.entity.Comment;
+import com.project.socialnetwork.entity.Notification;
+import com.project.socialnetwork.entity.Post;
+import com.project.socialnetwork.entity.PostLiked;
 import com.project.socialnetwork.service.AccountService;
 import com.project.socialnetwork.service.CommentService;
 import com.project.socialnetwork.service.ImageService;
@@ -42,6 +42,20 @@ public class HomePageController {
     private final AccountService accountService;
     private final NotificationService notificationService;
     private final CommentService commentService;
+
+    @ModelAttribute("newPost")
+    public Post newPost() {
+        return new Post();
+    }
+
+    @ModelAttribute("Account")
+    public Account account(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        if (session.getAttribute("username") != null) {
+            return accountService.findByEmail(session.getAttribute("username").toString());
+        }
+        return new Account();
+    }
 
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request,

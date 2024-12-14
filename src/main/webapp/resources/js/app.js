@@ -7,8 +7,9 @@ function connect(username) {
         console.log('Web Socket is connected');
         stompClient.subscribe('/users/queue/messages', function (message) {
             alert(message.body);
-            document.getElementById('noti-container').prepend(createNotiElement(message.body));
-            console.log(createNotiElement(message.body));
+            if (message.body.includes('ban')) {
+                window.location.href = '/logout';
+            }
         });
     });
 }
@@ -26,6 +27,7 @@ $(document).ready(function () {
 
     $('input[name="comment"]').keypress(function (event) {
         if (event.which === 13) {
+            console.log('Enter pressed');
             var postId = $(this).attr('id');
             var comment = $(this).val();
             var owner = $(this).closest('.cmt-div').find('.post-owner').val();

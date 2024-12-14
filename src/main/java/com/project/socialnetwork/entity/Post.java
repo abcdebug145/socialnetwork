@@ -1,4 +1,4 @@
-package com.project.socialnetwork.domain;
+package com.project.socialnetwork.entity;
 
 import java.util.Date;
 import java.util.Set;

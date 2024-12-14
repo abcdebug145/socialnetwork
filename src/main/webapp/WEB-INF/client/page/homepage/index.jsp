@@ -3,7 +3,6 @@
         <%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
             <!DOCTYPE html>
             <html lang="en">
-
             <head>
                 <!-- Required meta tags -->
                 <meta charset="utf-8">
@@ -22,14 +21,7 @@
             <body>
                 <input type="hidden" value="${account.username}" id="hidden-username">
                 <div class="container-scroller">
-                    <c:choose>
-                        <c:when test="${empty pageContext.request.userPrincipal}">
-                            <jsp:include page="../layout/navbar.jsp" />
-                        </c:when>
-                        <c:otherwise>
-                            <jsp:include page="../layout/search-bar.jsp" />
-                        </c:otherwise>
-                    </c:choose>
+                    <jsp:include page="../layout/navbar.jsp" />
                     <div class="container-fluid page-body-wrapper">
                         <c:if test="${not empty pageContext.request.userPrincipal}">
                             <jsp:include page="../layout/sidebar.jsp" />
@@ -57,7 +49,6 @@
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
                 <script src="/js/app.js"></script>
                 <script>
-
                     function uploadImage(imgToUpload) {
                         const img = document.getElementById('postPicture');
                         const fileReader = new FileReader();

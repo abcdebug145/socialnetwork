@@ -8,7 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class MessageController {
+public class NotificationController {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -23,6 +23,13 @@ public class MessageController {
     @MessageMapping("/comment")
     public void sendCommentNoti(SimpMessageHeaderAccessor sha, @Payload String username) {
         String message = sha.getUser().getName() + " commented in your post";
+
+        simpMessagingTemplate.convertAndSendToUser(username, "/queue/messages", message);
+    }
+
+    @MessageMapping("/ban")
+    public void sendBanNoti(SimpMessageHeaderAccessor sha, @Payload String username) {
+        String message = "Your account has been banned";
 
         simpMessagingTemplate.convertAndSendToUser(username, "/queue/messages", message);
     }

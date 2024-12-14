@@ -1,4 +1,4 @@
-<%@ page import="com.project.socialnetwork.domain.Account" %>
+<%@ page import="com.project.socialnetwork.entity.Account" %>
     <%@ page import="com.project.socialnetwork.service.AccountService" %>
         <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
             <!DOCTYPE html>
@@ -15,6 +15,7 @@
 
             <body>
                 <input type="hidden" value="${currAccount.username}" id="hidden-username">
+                <jsp:include page="../layout/sidebar.jsp"/>
                 <div class="container-fluid mb-3 d-flex flex-column justify-content-center align-items-center">
                     <img src="/images/avatar/${account.avatar}" class="rounded-circle mb-3 p-2" width="150"
                         height="150">
@@ -26,7 +27,7 @@
                                 Profile</a>
                         </c:when>
                     </c:choose>
-                    <jsp:include page="../layout/content-pane.jsp"></jsp:include>
+                    <jsp:include page="../layout/content-pane.jsp"/>
                 </div>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
                 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>

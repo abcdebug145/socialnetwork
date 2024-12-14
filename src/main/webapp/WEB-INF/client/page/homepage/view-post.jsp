@@ -14,7 +14,7 @@
 
             <body>
                 <input type="hidden" value="${account.username}" id="hidden-username">
-                <jsp:include page="../layout/navbar-logged-in.jsp"></jsp:include>
+                <jsp:include page="../layout/navbar.jsp"></jsp:include>
                 <br><br><br>
                 <div class="container post-detail-container row mx-auto">
                     <div class="col-sm-11 row">
@@ -46,11 +46,10 @@
                         <jsp:include page="../layout/content-pane.jsp"></jsp:include>
                     </div>
                 </div>
-                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-                <script src="/webjars/jquery/dist/jquery.min.js"></script>
-                <script src="/webjars/sockjs-client/sockjs.min.js"></script>
-                <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-                <script src="/js/app.js"></script>
             </body>
-
+            <script src="/webjars/jquery/dist/jquery.min.js"></script>
+            <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+            <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+            <script src="/js/app.js"></script>
             </html>

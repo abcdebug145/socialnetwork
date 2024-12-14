@@ -9,25 +9,17 @@
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
                 <title>Dashboard</title>
-                <!-- Plugin css for this page -->
-                <link rel="stylesheet" type="text/css" href="/js/select.dataTables.min.css">
-                <!-- End plugin css for this page -->
-                <!-- inject:css -->
                 <link rel="stylesheet" href="/css/style.css">
-                <!-- endinject -->
-                <style>
-                    .status-active:hover {}
-                </style>
             </head>
 
             <body class="with-welcome-text">
                 <div class="container-scroller">
                     <!-- partial:partials/_navbar.html -->
-                    <jsp:include page="../../layout/navbar.jsp" />
+                    <jsp:include page="../layout/navbar.jsp" />
                     <!-- partial -->
                     <div class="container-fluid page-body-wrapper">
                         <!-- partial:partials/_sidebar.html -->
-                        <jsp:include page="../../layout/sidebar.jsp" />
+
                         <!-- partial -->
                         <div class="main-panel">
                             <div class="content-wrapper">
@@ -50,9 +42,9 @@
                                                         <c:forEach var="account" items="${accounts}">
                                                             <tr style="text-align: center">
                                                                 <th scope="row">${account.id}</th>
-                                                                <td>
+                                                                <td class="username-col">
                                                                     <c:choose>
-                                                                        <c:when test="${account.role.name == 'ADMIN'}">
+                                                                        <c:when test="${account.role == 'ADMIN'}">
                                                                             <span
                                                                                 style="color: orangered">${account.username}</span>
                                                                         </c:when>
@@ -66,7 +58,7 @@
                                                                 <td>
                                                                     <c:choose>
                                                                         <c:when
-                                                                            test="${account.status.name == 'ACTIVE'}">
+                                                                            test="${account.status == 'ACTIVE'}">
                                                                             <span
                                                                                 style="color: greenyellow; font-size: 30px;"
                                                                                 data-bs-toggle="tooltip"
@@ -84,12 +76,12 @@
                                                                         class="btn btn-success">View</a>
                                                                     <c:choose>
                                                                         <c:when
-                                                                            test="${account.status.name == 'ACTIVE'}">
+                                                                            test="${account.status == 'ACTIVE'}">
                                                                             <a onclick="preventDefault()" type="button"
                                                                                 style="width: 95px;"
                                                                                 class="btn btn-danger btn-delete btn-change-status"
                                                                                 id-account="${account.id}"
-                                                                                curr-status="${account.status.name}">
+                                                                                curr-status="${account.status}">
                                                                                 Ban
                                                                             </a>
                                                                         </c:when>
@@ -98,7 +90,7 @@
                                                                                 style="width: 95px; background-color: #96fa09"
                                                                                 class="btn btn-success btn-delete btn-change-status"
                                                                                 id-account="${account.id}"
-                                                                                curr-status="${account.status.name}">
+                                                                                curr-status="${account.status}">
                                                                                 Unban
                                                                             </a>
                                                                         </c:otherwise>
@@ -128,8 +120,6 @@
                 </div>
 
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
-                    crossorigin="anonymous"></script>
                 <script src="/js/custom.js"></script>
                 <!-- End custom js for this page-->
                 <script>

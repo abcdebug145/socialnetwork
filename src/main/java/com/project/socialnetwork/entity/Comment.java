@@ -1,4 +1,4 @@
-package com.project.socialnetwork.domain;
+package com.project.socialnetwork.entity;
 
 import java.util.Date;
 
@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,24 +19,25 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "notifications")
+@Table(name = "comments")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notification {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String message;
-    private boolean isRead;
+    private String content;
     private Date date = new Date();
+    @Transient
+    private String timeAgo;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    @JsonIncludeProperties({ "id", "title" })
+    @JsonIncludeProperties({ "id" })
     private Post post;
 
     @ManyToOne

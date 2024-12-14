@@ -1,14 +1,8 @@
 package com.project.socialnetwork.service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -25,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletContext;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ContentDetectionService {
@@ -33,7 +28,40 @@ public class ContentDetectionService {
     @Autowired
     private Environment environment;
 
-    public String getContent(String response) {
+    public String getContent(String image) {
+        String serverAddress = "127.0.0.1";
+        String imagePath = this.servletContext.getRealPath("/resources/images/post/" + image);
+        int port = 5000;
+        try (Socket socket = new Socket(serverAddress, port);
+             OutputStream outputStream = socket.getOutputStream();
+             FileInputStream fileInputStream = new FileInputStream(new File(imagePath));
+             InputStream inputStream = socket.getInputStream()) {
+
+            // Đọc file ảnh thành byte[]
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+
+            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            outputStream.flush();
+
+            socket.shutdownOutput();
+
+            StringBuilder responseBuilder = new StringBuilder();
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                responseBuilder.append(new String(buffer, 0, bytesRead, StandardCharsets.UTF_8));
+            }
+
+            return responseBuilder.toString();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public String getContenthehe(String response) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(response);
