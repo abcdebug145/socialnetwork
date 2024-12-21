@@ -1,6 +1,8 @@
-package com.project.socialnetwork.domain;
+package com.project.socialnetwork.entity;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,26 +18,26 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "notifications")
+@Table(name = "posts_liked")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notification {
+public class PostLiked {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String message;
-    private boolean isRead;
     private Date date = new Date();
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @JsonIncludeProperties("id")
     private Post post;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @JsonIncludeProperties({ "id", "username" })
     private Account account;
 }

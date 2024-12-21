@@ -9,26 +9,17 @@
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
                 <title>Dashboard</title>
-                <!-- Plugin css for this page -->
-                <link rel="stylesheet" type="text/css" href="/js/select.dataTables.min.css">
-                <!-- End plugin css for this page -->
-                <!-- inject:css -->
                 <link rel="stylesheet" href="/css/style.css">
-                <!-- endinject -->
-                <link rel="shortcut icon" href="/images/favicon.png" />
-                <style>
-                    .status-active:hover {}
-                </style>
             </head>
 
             <body class="with-welcome-text">
                 <div class="container-scroller">
                     <!-- partial:partials/_navbar.html -->
-                    <jsp:include page="../../layout/navbar.jsp" />
+                    <jsp:include page="../layout/navbar.jsp" />
                     <!-- partial -->
                     <div class="container-fluid page-body-wrapper">
                         <!-- partial:partials/_sidebar.html -->
-                        <jsp:include page="../../layout/sidebar.jsp" />
+
                         <!-- partial -->
                         <div class="main-panel">
                             <div class="content-wrapper">
@@ -51,9 +42,9 @@
                                                         <c:forEach var="account" items="${accounts}">
                                                             <tr style="text-align: center">
                                                                 <th scope="row">${account.id}</th>
-                                                                <td>
+                                                                <td class="username-col">
                                                                     <c:choose>
-                                                                        <c:when test="${account.role.name == 'ADMIN'}">
+                                                                        <c:when test="${account.role == 'ADMIN'}">
                                                                             <span
                                                                                 style="color: orangered">${account.username}</span>
                                                                         </c:when>
@@ -66,8 +57,7 @@
                                                                 <td>${account.address}</td>
                                                                 <td>
                                                                     <c:choose>
-                                                                        <c:when
-                                                                            test="${account.status.name == 'ACTIVE'}">
+                                                                        <c:when test="${account.status == 'ACTIVE'}">
                                                                             <span
                                                                                 style="color: greenyellow; font-size: 30px;"
                                                                                 data-bs-toggle="tooltip"
@@ -80,26 +70,26 @@
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 <td>
-                                                                    <a href="/admin/accounts/account-details?id=${account.id}"
-                                                                        type="button" style="width: 95px;"
+                                                                    <a href="/profile/${account.username}" type="button"
+                                                                        style="width: 95px;"
                                                                         class="btn btn-success">View</a>
                                                                     <c:choose>
-                                                                        <c:when
-                                                                            test="${account.status.name == 'ACTIVE'}">
-                                                                            <a onclick="preventDefault()" type="button"
-                                                                                style="width: 95px;"
+                                                                        <c:when test="${account.status == 'ACTIVE'}">
+                                                                            <a onclick="event.preventDefault()"
+                                                                                type="button" style="width: 95px;"
                                                                                 class="btn btn-danger btn-delete btn-change-status"
                                                                                 id-account="${account.id}"
-                                                                                curr-status="${account.status.name}">
+                                                                                curr-status="${account.status}">
                                                                                 Ban
                                                                             </a>
                                                                         </c:when>
                                                                         <c:otherwise>
-                                                                            <a onclick="preventDefault()" type="button"
+                                                                            <a onclick="event.preventDefault()"
+                                                                                type="button"
                                                                                 style="width: 95px; background-color: #96fa09"
                                                                                 class="btn btn-success btn-delete btn-change-status"
                                                                                 id-account="${account.id}"
-                                                                                curr-status="${account.status.name}">
+                                                                                curr-status="${account.status}">
                                                                                 Unban
                                                                             </a>
                                                                         </c:otherwise>
@@ -115,22 +105,21 @@
                             </div>
                         </div>
                     </div>
-                    <%-- pagination --%>
-                        <nav style="display: flex; justify-content: center">
-                            <ul class="pagination pagination-circle">
-                                <li class="prv-btn"><a class="page-link">Previous</a></li>
-                                <c:forEach var="page" begin="1" end="${totalPages}">
-                                    <li class="page-item"><a class="page-link"
-                                            href="/admin/accounts?page=${page}">${page}</a></li>
-                                </c:forEach>
-                                <li class="next-btn"><a class="page-link">Next</a></li>
-                            </ul>
-                        </nav>
+                    <nav style="display: flex; justify-content: center">
+                        <ul class="pagination pagination-circle">
+                            <li class="prv-btn"><a class="page-link">Previous</a></li>
+                            <c:forEach var="page" begin="1" end="${totalPages}">
+                                <li class="page-item"><a class="page-link" href="/admin?page=${page}">${page}</a>
+                                </li>
+                            </c:forEach>
+                            <li class="next-btn"><a class="page-link">Next</a></li>
+                        </ul>
+                    </nav>
                 </div>
 
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
-                    crossorigin="anonymous"></script>
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
                 <script src="/js/custom.js"></script>
                 <!-- End custom js for this page-->
                 <script>

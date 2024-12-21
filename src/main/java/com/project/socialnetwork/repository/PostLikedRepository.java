@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.project.socialnetwork.domain.Account;
-import com.project.socialnetwork.domain.Post;
-import com.project.socialnetwork.domain.PostLiked;
+import com.project.socialnetwork.entity.Account;
+import com.project.socialnetwork.entity.Post;
+import com.project.socialnetwork.entity.PostLiked;
 
 @Repository
 public interface PostLikedRepository extends JpaRepository<PostLiked, Long> {
@@ -22,5 +22,5 @@ public interface PostLikedRepository extends JpaRepository<PostLiked, Long> {
 
     PostLiked findByPostId(Long postId);
 
-    void deleteByPostId(Long postId);
+    void deleteByPost(Post post);
 }

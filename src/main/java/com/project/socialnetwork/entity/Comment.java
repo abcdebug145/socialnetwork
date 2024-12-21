@@ -1,6 +1,8 @@
-package com.project.socialnetwork.domain;
+package com.project.socialnetwork.entity;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,9 +37,11 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @JsonIncludeProperties({ "id" })
     private Post post;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @JsonIncludeProperties({ "id", "username" })
     private Account account;
 }
