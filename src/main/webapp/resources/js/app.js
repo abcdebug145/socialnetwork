@@ -1,12 +1,22 @@
 var stompClient = null;
 
 function connect(username) {
-    var socket = new SockJS('/hello');
+    var socket = new SockJS('/noti');
     stompClient = Stomp.over(socket);
     stompClient.connect({ username: username, }, function () {
         console.log('Web Socket is connected');
         stompClient.subscribe('/users/queue/messages', function (message) {
-            alert(message.body);
+            $.ajax({
+                url: '/getUnreadNoti',
+                method: 'GET',
+                success: function (data) {
+                    showNumOfNoti(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+            // alert('heheh: ' + message.body);
             if (message.body.includes('ban')) {
                 window.location.href = '/logout';
             }
@@ -27,7 +37,6 @@ $(document).ready(function () {
 
     $('input[name="comment"]').keypress(function (event) {
         if (event.which === 13) {
-            console.log('Enter pressed');
             var postId = $(this).attr('id');
             var comment = $(this).val();
             var owner = $(this).closest('.cmt-div').find('.post-owner').val();
@@ -80,7 +89,6 @@ function likePost(postId, owner) {
 
 function submitComment(postId, comment, owner) {
     var currUsername = document.getElementById('hidden-username').value;
-    console.log(currUsername + " " + owner);
     if (currUsername === '') {
         alert('Please login to like');
         return;
@@ -126,4 +134,30 @@ function createNotiElement(message) {
     notiElement.appendChild(contentDiv);
 
     return notiElement;
+}
+
+function showNumOfNoti(num) {
+    var notiBtn = document.getElementById('noti-btn');
+    var newNotiBtn = document.createElement('a');
+    newNotiBtn.className = 'list-group-item list-group-item-action';
+    newNotiBtn.title = 'Notification';
+    newNotiBtn.setAttribute('data-bs-toggle', 'modal');
+    newNotiBtn.href = '#NotificationModal';
+    newNotiBtn.onclick = function (event) { getNotification(event); };
+
+    var bellIcon = document.createElement('i');
+    bellIcon.className = 'bi bi-bell fs-1';
+
+    newNotiBtn.appendChild(bellIcon);
+    if (num > 0) {
+        var unreadNotiSpan = document.createElement('span');
+        unreadNotiSpan.id = 'unreadNoti';
+        unreadNotiSpan.className = 'position-absolute bg-danger rounded-circle d-flex align-items-center justify-content-center text-white px-1';
+        unreadNotiSpan.style.cssText = 'top: 0; right: 0; height: 15px; min-width: 15px; transform: translate(-90%, 90%); font-size: 12px;';
+        unreadNotiSpan.textContent = num;
+
+        newNotiBtn.appendChild(unreadNotiSpan);
+    }
+
+    notiBtn.replaceWith(newNotiBtn);
 }

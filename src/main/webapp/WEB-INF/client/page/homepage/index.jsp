@@ -3,6 +3,7 @@
         <%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
             <!DOCTYPE html>
             <html lang="en">
+
             <head>
                 <!-- Required meta tags -->
                 <meta charset="utf-8">
@@ -19,7 +20,7 @@
             </head>
 
             <body>
-                <input type="hidden" value="${account.username}" id="hidden-username">
+                <input type="hidden" value="${currAccount.username}" id="hidden-username">
                 <div class="container-scroller">
                     <jsp:include page="../layout/navbar.jsp" />
                     <div class="container-fluid page-body-wrapper">

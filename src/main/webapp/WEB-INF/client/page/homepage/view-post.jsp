@@ -13,7 +13,7 @@
             </head>
 
             <body>
-                <input type="hidden" value="${account.username}" id="hidden-username">
+                <input type="hidden" value="${currAccount.username}" id="hidden-username">
                 <jsp:include page="../layout/navbar.jsp"></jsp:include>
                 <br><br><br>
                 <div class="container post-detail-container row mx-auto">
@@ -52,4 +52,5 @@
             <script src="/webjars/stomp-websocket/stomp.min.js"></script>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
             <script src="/js/app.js"></script>
+
             </html>

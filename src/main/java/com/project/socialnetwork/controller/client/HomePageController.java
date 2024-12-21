@@ -48,54 +48,65 @@ public class HomePageController {
         return new Post();
     }
 
-    @ModelAttribute("Account")
+    @ModelAttribute("currAccount")
     public Account account(HttpServletRequest request) {
         HttpSession session = request.getSession();
         if (session.getAttribute("username") != null) {
-            return accountService.findByEmail(session.getAttribute("username").toString());
+            Account currAccount = accountService.findByEmail(session.getAttribute("username").toString());
+            List<Notification> unreadNotifications = notificationService.getUnreadNotifications(currAccount);
+            currAccount.setUnreadNoti(unreadNotifications.size());
+            System.out.println("Unread notifications: " + unreadNotifications.size());
+            return currAccount;
         }
         return new Account();
     }
 
-    @GetMapping("/")
-    public String getHomePage(Model model, HttpServletRequest request,
-            @RequestParam("keyword") Optional<String> keyword) {
-        List<PostLiked> postLikeds = new ArrayList<>();
-        List<Notification> notifications = new ArrayList<>();
-        Account currAccount = null;
+    @ModelAttribute("postLiked")
+    public List<PostLiked> postLiked(HttpServletRequest request) {
         HttpSession session = request.getSession();
         if (session.getAttribute("username") != null) {
-            currAccount = accountService.findByEmail(session.getAttribute("username").toString());
-            notifications = notificationService.getAllNotifications(currAccount);
-            currAccount.setUnreadNoti(notifications.size());
-            postLikeds = accountService.getPostsLiked(currAccount.getId());
-            model.addAttribute("postLiked", postLikeds);
+            Account currAccount = accountService.findByEmail(session.getAttribute("username").toString());
+            return accountService.getPostsLiked(currAccount.getId());
         }
-        notificationService.sendNotification("New user has logged in");
-        if (keyword.isPresent()) {
-            model.addAttribute("listPost", postService.getAllPosts(currAccount, keyword.get()));
-        }
+        return new ArrayList<>();
+    }
 
-        model.addAttribute("newPost", new Post());
-        model.addAttribute("account", currAccount);
-        model.addAttribute("keyword", keyword.isPresent() ? keyword.get() : "");
-        model.addAttribute("notifications", notifications);
+    @ModelAttribute("listPost")
+    public List<Post> listPost(HttpServletRequest request, @RequestParam("keyword") Optional<String> keyword) {
+        HttpSession session = request.getSession();
+        Account currAccount = null;
+        if (session.getAttribute("username") != null) {
+            currAccount = accountService.findByEmail(session.getAttribute("username").toString());
+        }
+        if (keyword.isPresent()) {
+            return postService.getAllPosts(currAccount, keyword.get());
+        }
+        return new ArrayList<>();
+    }
+
+    @ModelAttribute("keyword")
+    public String keyword(@RequestParam("keyword") Optional<String> keyword) {
+        return keyword.isPresent() ? keyword.get() : "";
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<List<Notification>> getMethodName() {
+        List<Notification> notifications = notificationService
+                .getAllNotifications(accountService.findByEmail("nam@admin.com"));
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(notifications);
+    }
+
+    @GetMapping("/")
+    public String getHomePage() {
         return "client/page/homepage/index";
     }
 
     @GetMapping("/post/{id}")
     public String getDetailPost(Model model, @PathVariable("id") Long id, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Account currAccount = null;
-        if (session.getAttribute("username") != null) {
-            currAccount = accountService.findByEmail(session.getAttribute("username").toString());
-            model.addAttribute("postLiked", accountService.getPostsLiked(currAccount.getId()));
-        }
         Post post = postService.getPostById(id);
         List<Comment> comments = commentService.getAllComment(post);
         List<Post> similarPosts = postService.getAllSimilarPosts(post);
 
-        model.addAttribute("account", currAccount);
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
         model.addAttribute("listPost", similarPosts);
@@ -142,7 +153,6 @@ public class HomePageController {
         }
         Account account = accountService.findByUsername(username);
         List<Post> posts = postService.getPostsByAccount(account);
-        model.addAttribute("currAccount", currAccount);
         model.addAttribute("account", account);
         model.addAttribute("listPost", posts);
         return "client/page/user/user-profile";
@@ -199,7 +209,8 @@ public class HomePageController {
         postService.likePost(post, currAccount);
         post.setLikeCount(post.getPostLikeds().size());
         postService.savePost(post);
-        notificationService.createNotification(currAccount, post, "like");
+        if (like == true)
+            notificationService.createNotification(currAccount, post, "like");
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
@@ -223,4 +234,15 @@ public class HomePageController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/getNotifications")
+    public ResponseEntity<List<Notification>> notifications(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Account currAccount = null;
+        if (session.getAttribute("username") != null) {
+            currAccount = accountService.findByEmail(session.getAttribute("username").toString());
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                    .body(notificationService.getAllNotifications(currAccount));
+        }
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(new ArrayList<>());
+    }
 }

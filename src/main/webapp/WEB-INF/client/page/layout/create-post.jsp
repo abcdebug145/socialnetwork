@@ -45,19 +45,29 @@
                     </div>
                     <div class="modal-body" id="noti-container">
                         <c:forEach var="notification" items="${notifications}">
-                            <div class="row border border-info mb-3">
-                                <div class="col-sm-3">
-                                    <img src="/images/avatar/${notification.account.avatar}" alt="avatar" height="50"
-                                        width="50">
-                                </div>
-                                <div class="col-sm-9">
-                                    <p>${notification.message}</p>
-                                </div>
+                            <c:choose>
+                                <c:when test="${notification.read eq true}">
+                                    <div class="row border border-info mb-3">
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="row border border-info mb-3" style="background-color: lightblue;">
+                                </c:otherwise>
+                            </c:choose>
+                            <div class="col-sm-3">
+                                <img src="/images/avatar/${notification.account.avatar}" alt="avatar" height="50"
+                                    width="50">
                             </div>
-                        </c:forEach>
+                            <div class="col-sm-9">
+                                <p>${notification.message}</p>
+                            </div>
+                            <div>
+                                ${notification.timeAgo}
+                            </div>
                     </div>
+                    </c:forEach>
                 </div>
             </div>
+        </div>
         </div>
         <script>
             function handle() {

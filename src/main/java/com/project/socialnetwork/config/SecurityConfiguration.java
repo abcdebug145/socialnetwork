@@ -23,9 +23,9 @@ import jakarta.servlet.DispatcherType;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
 
-    private static final String[] PERMITTED_URL = {"/", "/login", "/register", "/client/**",
+    private static final String[] PERMITTED_URL = { "/", "/login", "/register", "/client/**",
             "/loadMorePosts", "/webjars/**", "/topic/**", "/post/**", "/profile/**",
-            "/css/**", "/js/**", "/images/**", "/webjars/**"};
+            "/css/**", "/js/**", "/images/**", "/webjars/**", "/test" };
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -39,7 +39,7 @@ public class SecurityConfiguration {
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder,
-                                                            UserDetailsService userDetailsService) {
+            UserDetailsService userDetailsService) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder);
         provider.setUserDetailsService(userDetailsService);

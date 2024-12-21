@@ -3,18 +3,23 @@ package com.project.socialnetwork.controller.admin;
 import java.util.List;
 import java.util.Optional;
 
-import com.project.socialnetwork.enums.AccountStatus;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.socialnetwork.entity.Account;
+import com.project.socialnetwork.enums.AccountStatus;
 import com.project.socialnetwork.service.AccountService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class AccountController {
@@ -55,10 +60,11 @@ public class AccountController {
     public ResponseEntity<Account> changeStatusAccount(@RequestParam("id") String accountId,
             @RequestParam("currStatus") String statusId) {
         Account account = accountService.findById(Long.parseLong(accountId));
-        account.setStatus(Long.parseLong(statusId) == 1 ? AccountStatus.BANNED : AccountStatus.ACTIVE);
+        System.out.println(statusId);
+        System.out.println(AccountStatus.BANNED + " " + AccountStatus.ACTIVE);
+        account.setStatus(statusId.equalsIgnoreCase("ACTIVE") ? AccountStatus.BANNED : AccountStatus.ACTIVE);
         accountService.saveAccount(account);
         return ResponseEntity.ok(account);
     }
 
 }
-

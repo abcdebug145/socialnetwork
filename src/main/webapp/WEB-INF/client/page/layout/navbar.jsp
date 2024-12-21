@@ -2,7 +2,7 @@
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
             <nav class="navbar navbar-expand-lg bg-body-tertiary fs-5">
-                <input type="hidden" value="${account.username}" id="hidden-username">
+                <input type="hidden" value="${currAccount.username}" id="hidden-username">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="/">
                         <img src="/images/dashboard/logo.png" alt="asdasd"
@@ -47,8 +47,7 @@
                             </c:when>
                             <c:otherwise>
                                 <div class="d-flex">
-                                    <img src="${pageContext.request.contextPath}/images/avatar/default-avatar.png"
-                                        height="40" width="40">
+                                    <img src="/images/avatar/${currAccount.avatar}" height="40" width="40">
                                 </div>
                             </c:otherwise>
                         </c:choose>
