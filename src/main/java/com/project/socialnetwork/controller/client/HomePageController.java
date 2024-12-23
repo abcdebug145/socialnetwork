@@ -89,23 +89,21 @@ public class HomePageController {
         return keyword.isPresent() ? keyword.get() : "";
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<List<Notification>> getMethodName() {
-        List<Notification> notifications = notificationService
-                .getAllNotifications(accountService.findByEmail("nam@admin.com"));
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(notifications);
-    }
-
     @GetMapping("/")
     public String getHomePage() {
         return "client/page/homepage/index";
+    }
+
+    @GetMapping("/search")
+    public String search(@RequestParam("keyword") String keyword) {
+        return "client/page/homepage/search";
     }
 
     @GetMapping("/post/{id}")
     public String getDetailPost(Model model, @PathVariable("id") Long id, HttpServletRequest request) {
         Post post = postService.getPostById(id);
         List<Comment> comments = commentService.getAllComment(post);
-        List<Post> similarPosts = postService.getAllSimilarPosts(post);
+        List<Post> similarPosts = postService.getAllSimilarPosts(post, "");
 
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
@@ -119,6 +117,17 @@ public class HomePageController {
         long maxPage = (long) Math.ceil((double) (postService.getMaxPage() / 40));
         List<Post> posts = postService.getPosts((int) (page % maxPage), size);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(posts);
+    }
+
+    @GetMapping("/getSimilarPosts")
+    public ResponseEntity<List<Post>> getSimilarPosts(@RequestParam("postId") Optional<Long> postId,
+            @RequestParam("keyword") Optional<String> keyword, @RequestParam("page") long page,
+            @RequestParam("size") int size) {
+        Post post = postId.isPresent() ? postService.getPostById(postId.get()) : null;
+        String kw = keyword.isPresent() ? keyword.get() : "";
+
+        List<Post> similarPosts = postService.getAllSimilarPosts(post, kw);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(similarPosts);
     }
 
     @GetMapping("/getPostLikedByAccount")

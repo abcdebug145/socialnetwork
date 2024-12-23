@@ -14,7 +14,7 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <form class="d-flex col-6 mx-auto" role="search" action="/" method="GET"
+                        <form class="d-flex col-6 mx-auto" role="search" action="/search" method="GET"
                             modelAttribute="keyword">
                             <div class="input-group">
                                 <input class="form-control border-end-0 border rounded-pill" type="search"
