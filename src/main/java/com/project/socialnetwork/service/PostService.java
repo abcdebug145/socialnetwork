@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.project.socialnetwork.repository.NotificationRepository;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.project.socialnetwork.entity.Account;
@@ -19,8 +16,12 @@ import com.project.socialnetwork.entity.Comment;
 import com.project.socialnetwork.entity.Post;
 import com.project.socialnetwork.entity.PostLiked;
 import com.project.socialnetwork.repository.CommentRepository;
+import com.project.socialnetwork.repository.NotificationRepository;
 import com.project.socialnetwork.repository.PostLikedRepository;
 import com.project.socialnetwork.repository.PostRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
@@ -61,7 +62,7 @@ public class PostService {
         return postRepository.findByAccountId(account.getId());
     }
 
-    public List<Post> getAllSimilarPosts(Post post) {
+    public List<Post> getAllSimilarPosts(Post post, String keyword) {
         Set<String> postContent;
         if (post.getContent() != null) {
             postContent = new HashSet<>(Arrays.asList(post.getContent()
@@ -69,6 +70,9 @@ public class PostService {
         } else {
             postContent = new HashSet<>();
         }
+        if (!keyword.equals(""))
+            postContent.add(keyword);
+
         List<Post> postList = postRepository.findAll();
         List<Post> similarPosts = postList.stream()
                 .filter(p -> postContent.stream()
@@ -90,8 +94,8 @@ public class PostService {
     public void createPost(Account account, Post post) {
         post.setAccount(account);
         try {
-//            String content = contentDetectionService
-//                    .getContent(contentDetectionService.getJsonResponse(post.getImage()));
+            // String content = contentDetectionService
+            // .getContent(contentDetectionService.getJsonResponse(post.getImage()));
             String response = contentDetectionService.getContent(post.getImage());
             String title = response.split("\\|")[0];
             String content = response.split("\\|")[1];
@@ -137,7 +141,7 @@ public class PostService {
                 postRepository.delete(post);
             }
         } catch (Exception e) {
-            System.out.println("ERROR: "+e.getMessage());
+            System.out.println("ERROR: " + e.getMessage());
         }
     }
 
@@ -153,4 +157,5 @@ public class PostService {
     public List<Post> getPostsByAccount(Account account) {
         return postRepository.findByAccountId(account.getId());
     }
+
 }
