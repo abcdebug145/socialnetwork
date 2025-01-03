@@ -43,6 +43,6 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
-    @JsonIncludeProperties({ "id", "username", "avatar" })
+    @JsonIncludeProperties({ "id","username", "avatar" })
     private Account account;
 }

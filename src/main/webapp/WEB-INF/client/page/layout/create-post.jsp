@@ -37,38 +37,20 @@
                 </div>
             </div>
         </div>
-        <div class="modal" id="NotificationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="NotificationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
-                <div class="modal-content w-75 mx-auto">
-                    <div class="modal-header">
-                        <h3 class="my-4 model-title">Notification</h3>
+                <div class="modal-content shadow-lg rounded">
+                    <div class="modal-header bg-primary text-white">
+                        <i class="bi bi-bell-fill fs-3"></i>
+                        <h3 class="ms-2 my-4 model-title">Notifications</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body" id="noti-container">
-                        <c:forEach var="notification" items="${notifications}">
-                            <c:choose>
-                                <c:when test="${notification.read eq true}">
-                                    <div class="row border border-info mb-3">
-                                </c:when>
-                                <c:otherwise>
-                                    <div class="row border border-info mb-3" style="background-color: lightblue;">
-                                </c:otherwise>
-                            </c:choose>
-                            <div class="col-sm-3">
-                                <img src="/images/avatar/${notification.account.avatar}" alt="avatar" height="50"
-                                    width="50">
-                            </div>
-                            <div class="col-sm-9">
-                                <p>${notification.message}</p>
-                            </div>
-                            <div>
-                                ${notification.timeAgo}
-                            </div>
+                    <div class="modal-body bg-light" id="noti-container">
                     </div>
-                    </c:forEach>
                 </div>
             </div>
         </div>
-        </div>
+
         <script>
             function handle() {
                 document.getElementById('create-post-form').submit();
