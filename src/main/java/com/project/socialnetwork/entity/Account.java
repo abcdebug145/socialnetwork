@@ -46,5 +46,5 @@ public class Account {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
     private Set<Notification> notifications;
-
+    
 }

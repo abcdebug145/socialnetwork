@@ -2,6 +2,8 @@ package com.project.socialnetwork.controller.client;
 
 import java.util.*;
 
+import com.project.socialnetwork.entity.*;
+import com.project.socialnetwork.service.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -9,20 +11,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.project.socialnetwork.entity.Account;
-import com.project.socialnetwork.entity.Comment;
-import com.project.socialnetwork.entity.Notification;
-import com.project.socialnetwork.entity.Post;
-import com.project.socialnetwork.entity.PostLiked;
-import com.project.socialnetwork.service.AccountService;
-import com.project.socialnetwork.service.CommentService;
-import com.project.socialnetwork.service.NotificationService;
-import com.project.socialnetwork.service.PostService;
-import com.project.socialnetwork.service.ImageService;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @AllArgsConstructor
@@ -33,6 +25,7 @@ public class HomePageController {
     private final AccountService accountService;
     private final NotificationService notificationService;
     private final CommentService commentService;
+    private final BanRequestService banRequestService;
 
     @ModelAttribute("newPost")
     public Post newPost() {
@@ -232,4 +225,37 @@ public class HomePageController {
         response.put("time", new Date());
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/submitReport")
+    public String submitReport(
+            @RequestParam("postId") Long postId,
+            @RequestParam("reason") String reason,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
+
+        HttpSession session = request.getSession();
+
+        // Ensure user is authenticated
+        String username = (String) session.getAttribute("username");
+        if (username == null) {
+            redirectAttributes.addFlashAttribute("error", "You must be logged in to report a post.");
+            return "redirect:/login";
+        }
+
+        // Fetch user and post details
+        Account currAccount = accountService.findByEmail(username);
+        Post post = postService.getPostById(postId);
+
+        if (post == null) {
+            redirectAttributes.addFlashAttribute("error", "Post not found.");
+            return "redirect:/";
+        }
+
+        // Process the report
+        banRequestService.createBanRequest(currAccount, post, reason);
+
+        // Success message
+        redirectAttributes.addFlashAttribute("success", "Your report has been submitted successfully.");
+        return "redirect:/";
+    }
+
 }
