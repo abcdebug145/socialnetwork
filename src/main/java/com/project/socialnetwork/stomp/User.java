@@ -1,4 +1,4 @@
-package com.project.socialnetwork.dto;
+package com.project.socialnetwork.stomp;
 
 import java.security.Principal;
 

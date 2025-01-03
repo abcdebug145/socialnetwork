@@ -55,15 +55,11 @@ public class NotificationService {
     }
 
     public void createNotification(Account account, Post post, String type) {
-        String message = "";
-        switch (type) {
-            case "comment":
-                message = account.getUsername() + " commented in your post ";
-                break;
-            case "like":
-                message = account.getUsername() + " liked your post";
-                break;
-        }
+        String message = switch (type) {
+            case "comment" -> " commented in your post ";
+            case "like" -> " liked your post";
+            default -> "";
+        };
         Notification noti = new Notification();
         noti.setAccount(account);
         noti.setPost(post);

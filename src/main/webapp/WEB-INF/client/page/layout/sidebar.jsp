@@ -95,10 +95,12 @@
         isNotificationsOpen = !isNotificationsOpen;
 
         if (isNotificationsOpen) {
+            console.log('Opening notifications...');
             notificationSidebar.classList.add('show');
             bellButton.classList.add('active');
             getNotifications();
         } else {
+            console.log('Closing notifications...');
             notificationSidebar.classList.remove('show');
             bellButton.classList.remove('active');
         }
@@ -126,7 +128,6 @@
             success: function (data) {
                 const notiContainer = document.getElementById("noti-container");
                 notiContainer.innerHTML = "";
-                console.log(data);
                 data.forEach(notification => {
                     const notiElement = createNotificationElement(notification);
                     notiContainer.appendChild(notiElement);

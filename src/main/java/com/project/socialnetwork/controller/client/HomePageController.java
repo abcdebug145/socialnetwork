@@ -232,16 +232,4 @@ public class HomePageController {
         response.put("time", new Date());
         return ResponseEntity.ok(response);
     }
-
-    @GetMapping("/getNotifications")
-    public ResponseEntity<List<Notification>> notifications(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Account currAccount = null;
-        if (session.getAttribute("username") != null) {
-            currAccount = accountService.findByEmail(session.getAttribute("username").toString());
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body(notificationService.getAllNotifications(currAccount));
-        }
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(new ArrayList<>());
-    }
 }

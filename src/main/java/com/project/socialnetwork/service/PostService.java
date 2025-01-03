@@ -149,7 +149,13 @@ public class PostService {
 
     public List<Post> getPosts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return postRepository.findAll(pageable).getContent();
+        List<Post> posts = new ArrayList<>(postRepository.findAll(pageable).getContent());
+        try {
+            Collections.shuffle(posts);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return posts;
     }
 
 }

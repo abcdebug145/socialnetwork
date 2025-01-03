@@ -1,9 +1,13 @@
 package com.project.socialnetwork.controller.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.project.socialnetwork.entity.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -61,6 +65,18 @@ public class NotificationController {
         Map<String, Object> response = new HashMap<>();
         response.put("isSuccess", true);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getNotifications")
+    public ResponseEntity<List<Notification>> notifications(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Account currAccount = null;
+        if (session.getAttribute("username") != null) {
+            currAccount = accountService.findByEmail(session.getAttribute("username").toString());
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                    .body(notificationService.getAllNotifications(currAccount));
+        }
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(new ArrayList<>());
     }
 
     @GetMapping("/getUnreadNoti")

@@ -10,6 +10,7 @@ function connect(username) {
                 url: '/getUnreadNoti',
                 method: 'GET',
                 success: function (data) {
+                    console.log("before showNumOfNoti");
                     showNumOfNoti(data);
                 },
                 error: function (xhr, status, error) {
@@ -114,48 +115,49 @@ function submitComment(postId, comment, owner) {
     });
 }
 
-function createNotiElement(message) {
-    var notiElement = document.createElement('div');
-    notiElement.classList.add('row', 'border', 'border-info', 'mb-3');
-
-    var avtDiv = document.createElement('div');
-    avtDiv.classList.add('col-sm-3');
-
-    var avt = document.createElement('img');
-    avt.src = '/images/avatar/default-avatar.png';
-    avt.width = 50;
-
-    var contentDiv = document.createElement('div');
-    contentDiv.classList.add('col-sm-9');
-    contentDiv.innerText = message;
-
-    avtDiv.appendChild(avt);
-    notiElement.appendChild(avtDiv);
-    notiElement.appendChild(contentDiv);
-
-    return notiElement;
-}
+// function createNotiElement(message) {
+//     var notiElement = document.createElement('div');
+//     notiElement.classList.add('row', 'border', 'border-info', 'mb-3');
+//
+//     var avtDiv = document.createElement('div');
+//     avtDiv.classList.add('col-sm-3');
+//
+//     var avt = document.createElement('img');
+//     avt.src = '/images/avatar/default-avatar.png';
+//     avt.width = 50;
+//
+//     var contentDiv = document.createElement('div');
+//     contentDiv.classList.add('col-sm-9');
+//     contentDiv.innerText = message;
+//
+//     avtDiv.appendChild(avt);
+//     notiElement.appendChild(avtDiv);
+//     notiElement.appendChild(contentDiv);
+//
+//     return notiElement;
+// }
 
 function showNumOfNoti(num) {
     var notiBtn = document.getElementById('noti-btn');
     var newNotiBtn = document.createElement('a');
     newNotiBtn.className = 'list-group-item list-group-item-action';
     newNotiBtn.title = 'Notification';
-    newNotiBtn.setAttribute('data-bs-toggle', 'modal');
-    newNotiBtn.href = '#NotificationModal';
-    newNotiBtn.onclick = function (event) { getNotification(event); };
+    newNotiBtn.id = 'noti-btn';
+    newNotiBtn.role = 'button';
+    newNotiBtn.onclick = function (event) {
+        toggleNotifications(event);
+    };
 
     var bellIcon = document.createElement('i');
     bellIcon.className = 'bi bi-bell fs-1';
-
     newNotiBtn.appendChild(bellIcon);
+
     if (num > 0) {
         var unreadNotiSpan = document.createElement('span');
         unreadNotiSpan.id = 'unreadNoti';
         unreadNotiSpan.className = 'position-absolute bg-danger rounded-circle d-flex align-items-center justify-content-center text-white px-1';
         unreadNotiSpan.style.cssText = 'top: 0; right: 0; height: 15px; min-width: 15px; transform: translate(-90%, 90%); font-size: 12px;';
         unreadNotiSpan.textContent = num;
-
         newNotiBtn.appendChild(unreadNotiSpan);
     }
 
