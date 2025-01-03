@@ -49,6 +49,7 @@
                                 <div class="d-flex">
                                     <img src="/images/avatar/${currAccount.avatar}" height="40" width="40">
                                 </div>
+                                
                             </c:otherwise>
                         </c:choose>
                     </div>

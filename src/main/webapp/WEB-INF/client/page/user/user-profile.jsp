@@ -11,40 +11,46 @@
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
                     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
                     crossorigin="anonymous">
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
             </head>
 
             <body>
+                <jsp:include page="../layout/navbar.jsp" />
                 <input type="hidden" value="${currAccount.username}" id="hidden-username">
-                <jsp:include page="../layout/sidebar.jsp" />
-                <div class="container-fluid mb-3 d-flex flex-column justify-content-center align-items-center">
-                    <img src="/images/avatar/${account.avatar}" class="rounded-circle mb-3 p-2" width="150"
-                        height="150">
-                    <h3 class="p-2 mb-3">${account.username}</h3>
-                    <p class="fs-14 text-secondary-emphasis mb-3">${account.email}</p>
-                    <c:if test="${account.email==sessionScope.username}">
-                        <a href="/profile/edit-profile" class="btn btn-secondary rounded-pill mb-3 fs-5">Edit
-                            Profile</a>
-                    </c:if>
-                    <c:if test="${currAccount.role == 'ADMIN' && account.email!=sessionScope.username}">
-                        <c:choose>
-                            <c:when test="${account.status == 'ACTIVE'}">
-                                <a onclick="changeStatus(event)" type="button" style="width: 95px;"
-                                    class="btn btn-danger btn-delete" id-account="${account.id}"
-                                    curr-status="${account.status}" username="${account.username}">
-                                    Ban
-                                </a>
-                            </c:when>
-                            <c:otherwise>
-                                <a onclick="changeStatus(event)" type="button"
-                                    style="width: 95px; background-color: #96fa09" class="btn btn-success btn-delete"
-                                    id-account="${account.id}" curr-status="${account.status}"
-                                    username="${account.username}">
-                                    Unban
-                                </a>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:if>
-                    <jsp:include page="../layout/content-pane.jsp" />
+                <div class="container row">
+                    <div class="col-sm-1 container-fluid">
+                        <jsp:include page="../layout/sidebar.jsp" />
+                    </div>
+                    <div class="container-fluid mb-3 d-flex flex-column justify-content-center align-items-center col-sm-11">
+                        <img src="/images/avatar/${account.avatar}" class="rounded-circle mb-3 p-2" width="150"
+                             height="150">
+                        <h3 class="p-2 mb-3">${account.username}</h3>
+                        <p class="fs-14 text-secondary-emphasis mb-3">${account.email}</p>
+                        <c:if test="${account.email==sessionScope.username}">
+                            <a href="/profile/edit-profile" class="btn btn-secondary rounded-pill mb-3 fs-5">Edit
+                                Profile</a>
+                        </c:if>
+                        <c:if test="${currAccount.role == 'ADMIN' && account.email!=sessionScope.username}">
+                            <c:choose>
+                                <c:when test="${account.status == 'ACTIVE'}">
+                                    <a onclick="changeStatus(event)" type="button" style="width: 95px;"
+                                       class="btn btn-danger btn-delete" id-account="${account.id}"
+                                       curr-status="${account.status}" username="${account.username}">
+                                        Ban
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a onclick="changeStatus(event)" type="button"
+                                       style="width: 95px; background-color: #96fa09" class="btn btn-success btn-delete"
+                                       id-account="${account.id}" curr-status="${account.status}"
+                                       username="${account.username}">
+                                        Unban
+                                    </a>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:if>
+                        <jsp:include page="../layout/content-pane.jsp" />
+                    </div>
                 </div>
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
