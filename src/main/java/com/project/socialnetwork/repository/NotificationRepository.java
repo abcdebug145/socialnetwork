@@ -11,6 +11,7 @@ import com.project.socialnetwork.entity.Post;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
+    @Query("SELECT n FROM Notification n WHERE n.account.id != :accountId AND n.post.account.id = :accountId ORDER BY n.date DESC")
     List<Notification> findNotificationsByAccount(Long accountId);
 
     void deleteByPost(Post post);
