@@ -26,7 +26,6 @@ public class ContentDetectionService {
                 FileInputStream fileInputStream = new FileInputStream(new File(imagePath));
                 InputStream inputStream = socket.getInputStream()) {
 
-            // Đọc file ảnh thành byte[]
             byte[] buffer = new byte[4096];
             int bytesRead;
 
@@ -49,5 +48,4 @@ public class ContentDetectionService {
         }
         return "";
     }
-
 }
