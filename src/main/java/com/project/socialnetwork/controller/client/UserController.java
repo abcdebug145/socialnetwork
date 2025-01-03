@@ -1,5 +1,7 @@
 package com.project.socialnetwork.controller.client;
 
+import com.project.socialnetwork.enums.AccountStatus;
+import com.project.socialnetwork.enums.Role;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -9,10 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.project.socialnetwork.domain.Account;
+import com.project.socialnetwork.entity.Account;
 import com.project.socialnetwork.service.AccountService;
-import com.project.socialnetwork.service.RoleService;
-import com.project.socialnetwork.service.StatusService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -20,27 +20,17 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class UserController {
     private final AccountService accountService;
-    private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
-    private final StatusService statusService;
 
-    public UserController(AccountService accountService, RoleService roleService, PasswordEncoder passwordEncoder,
-            StatusService statusService) {
+    public UserController(AccountService accountService, PasswordEncoder passwordEncoder) {
         this.accountService = accountService;
-        this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
-        this.statusService = statusService;
     }
-
-    // Login
 
     @GetMapping("/login")
     public String getLoginPage(Model model) {
-        // model.addAttribute("loginAccount", new Account());
         return "client/page/auth/login";
     }
-
-    // Register
 
     @GetMapping("/register")
     public String getRegisterPage(Model model) {
@@ -50,9 +40,9 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(@ModelAttribute("regAccount") Account account) {
-        account.setRole(roleService.getRoleByName("USER"));
+        account.setRole(Role.USER);
         String avatar = "default-avatar.png";
-        account.setStatus(statusService.findById(1L)); // active account
+        account.setStatus(AccountStatus.ACTIVE); // active account
         account.setAvatar(avatar);
         String password = passwordEncoder.encode(account.getPassword());
         account.setPassword(password);
@@ -69,6 +59,14 @@ public class UserController {
         String passwordEncoded = passwordEncoder.encode(password);
         currAccount.setPassword(passwordEncoded);
         return ResponseEntity.ok("success");
+    }
+
+    @GetMapping("/getAccountStatus")
+    public ResponseEntity<String> getAccountStatus(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String username = session.getAttribute("username").toString();
+        Account currAccount = accountService.findByEmail(username);
+        return ResponseEntity.ok(currAccount.getStatus().toString());
     }
 
 }

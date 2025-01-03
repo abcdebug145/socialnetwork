@@ -98,7 +98,7 @@
 
                         function loadMorePosts() {
                             $.ajax({
-                                url: '/loadMorePosts',
+                                url: '/getSimilarPosts',
                                 type: 'GET',
                                 data: {
                                     page: currentPage,

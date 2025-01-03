@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
 
-import com.project.socialnetwork.domain.Comment;
-import com.project.socialnetwork.domain.Post;
+import com.project.socialnetwork.entity.Comment;
+import com.project.socialnetwork.entity.Post;
 import com.project.socialnetwork.repository.CommentRepository;
 
 @Service

@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.project.socialnetwork.domain.Account;
-import com.project.socialnetwork.domain.PostLiked;
+import com.project.socialnetwork.entity.Account;
+import com.project.socialnetwork.entity.PostLiked;
 import com.project.socialnetwork.repository.AccountRepository;
 import com.project.socialnetwork.repository.PostLikedRepository;
 

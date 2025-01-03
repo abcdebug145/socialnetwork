@@ -1,22 +1,32 @@
 package com.project.socialnetwork.service;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.project.socialnetwork.domain.Account;
-import com.project.socialnetwork.domain.Comment;
-import com.project.socialnetwork.domain.Post;
-import com.project.socialnetwork.domain.PostLiked;
+import com.project.socialnetwork.entity.Account;
+import com.project.socialnetwork.entity.Comment;
+import com.project.socialnetwork.entity.Post;
+import com.project.socialnetwork.entity.PostLiked;
 import com.project.socialnetwork.repository.CommentRepository;
+import com.project.socialnetwork.repository.NotificationRepository;
 import com.project.socialnetwork.repository.PostLikedRepository;
 import com.project.socialnetwork.repository.PostRepository;
 
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
@@ -24,22 +34,16 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final ContentDetectionService contentDetectionService;
     private final ImageService imageService;
+    private final NotificationRepository notificationRepository;
 
-    public PostService(PostRepository postRepository, PostLikedRepository postLikedRepository,
-                       CommentRepository commentRepository, ContentDetectionService contentDetectionService, ImageService imageService) {
-        this.postRepository = postRepository;
-        this.postLikedRepository = postLikedRepository;
-        this.commentRepository = commentRepository;
-        this.contentDetectionService = contentDetectionService;
-        this.imageService = imageService;
-    }
+    // public List<Post> getShuffledList() {
+    //     return postRepository.getRandomPosts();
+    // }
 
     public List<Post> getAllPosts(Account currAccount, String keyword) {
         List<Post> posts = new ArrayList<>();
         if (!keyword.equals(""))
             posts = postRepository.search(keyword);
-        else
-            posts = postRepository.findAll();
         Collections.shuffle(posts);
         if (currAccount != null) {
             List<Post> temp = new ArrayList<>();
@@ -60,7 +64,7 @@ public class PostService {
         return postRepository.findByAccountId(account.getId());
     }
 
-    public List<Post> getAllSimilarPosts(Post post) {
+    public List<Post> getAllSimilarPosts(Post post, String keyword) {
         Set<String> postContent;
         if (post.getContent() != null) {
             postContent = new HashSet<>(Arrays.asList(post.getContent()
@@ -68,10 +72,15 @@ public class PostService {
         } else {
             postContent = new HashSet<>();
         }
+        if (!keyword.equals(""))
+            postContent.add(keyword);
+
         List<Post> postList = postRepository.findAll();
         List<Post> similarPosts = postList.stream()
-                .filter(p -> postContent.stream().anyMatch(content -> p.getContent() != null && p.getContent().contains(content)))
+                .filter(p -> postContent.stream()
+                        .anyMatch(content -> p.getContent() != null && p.getContent().contains(content)))
                 .collect(Collectors.toList());
+        similarPosts.remove(post);
         Collections.shuffle(similarPosts);
         return similarPosts;
     }
@@ -87,10 +96,15 @@ public class PostService {
     public void createPost(Account account, Post post) {
         post.setAccount(account);
         try {
-            String content = contentDetectionService
-                    .getContent(contentDetectionService.getJsonResponse(post.getImage()));
+            // String content = contentDetectionService
+            // .getContent(contentDetectionService.getJsonResponse(post.getImage()));
+            String response = contentDetectionService.getContent(post.getImage());
+            String title = response.split("\\|")[0];
+            String content = response.split("\\|")[1];
+            if (post.getTitle() == null)
+                post.setTitle(title);
             post.setContent(content);
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -117,15 +131,25 @@ public class PostService {
         commentRepository.save(comment);
     }
 
+    @Transactional
     public void deletePost(Long id) {
-        postRepository.deleteById(id);
-        commentRepository.deleteCommentsByPost(getPostById(id));
-        postLikedRepository.deleteByPostId(id);
-        imageService.removeImage(getPostById(id).getImage(), "post");
+        Post post = postRepository.findById(id).orElse(null);
+        try {
+            if (post != null) {
+                postLikedRepository.deleteByPost(post);
+                commentRepository.deleteByPost(post);
+                notificationRepository.deleteByPost(post);
+                imageService.removeImage(getPostById(id).getImage(), "post");
+                postRepository.delete(post);
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
     }
 
     public List<Post> getPosts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return postRepository.findAll(pageable).getContent();
     }
+
 }

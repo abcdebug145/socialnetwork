@@ -25,5 +25,4 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         }
         response.sendRedirect("/");
     }
-    
 }

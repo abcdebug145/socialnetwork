@@ -1,9 +1,10 @@
-package com.project.socialnetwork.domain;
+package com.project.socialnetwork.entity;
 
 import java.util.Date;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -38,18 +39,18 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
-    @JsonBackReference
+    @JsonIncludeProperties({ "id", "username" })
     private Account account;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
-    @JsonBackReference
+    @JsonIncludeProperties({ "id" })
     private Set<PostLiked> postLikeds;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
-    @JsonBackReference
+    @JsonIncludeProperties({ "id", "content", "date", "account.username" })
     private Set<Comment> comments;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
-    @JsonBackReference
+    @JsonIncludeProperties({ "id", "content", "date", "account.username" })
     private Set<Notification> notifications;
 }
