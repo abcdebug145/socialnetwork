@@ -98,7 +98,7 @@
 
                                 <!-- Forgot password -->
                                 <div class="text-center mb-3">
-                                    <a class="text-muted" href="#!">Forgot password?</a>
+                                    <a class="text-muted" href="${pageContext.request.contextPath}/forgot-password">Forgot password?</a>
                                 </div>
 
                                 <!-- Registration link -->

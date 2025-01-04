@@ -49,7 +49,10 @@ public class UserController {
         accountService.saveAccount(account);
         return "redirect:/login";
     }
-
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordForm() {
+        return "client/page/auth/forgot-password";
+    }
     @PostMapping("/changePassword")
     public ResponseEntity<String> changePassword(HttpServletRequest request, @RequestBody String passwordData) {
         String password = passwordData.split(":\"")[1].split("\"")[0].split("}")[0];// {"password":"hehe"}

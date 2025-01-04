@@ -59,7 +59,7 @@
                                     type="submit" data-mdb-button-initialized="true">
                                     Log in
                                 </button>
-                                <a class="text-muted" href="#!">Forgot password?</a>
+                                <a class="text-muted" href="${pageContext.request.contextPath}/forgot-password">Forgot password?</a>
                             </div>
 
                             <div class="d-flex align-items-center justify-content-center pb-4">

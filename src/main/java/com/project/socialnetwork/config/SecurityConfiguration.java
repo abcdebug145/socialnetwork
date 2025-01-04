@@ -24,7 +24,7 @@ import jakarta.servlet.DispatcherType;
 public class SecurityConfiguration {
 
     private static final String[] PERMITTED_URL = { "/", "/login", "/register", "/client/**",
-            "/loadMorePosts", "/webjars/**", "/topic/**", "/post/**", "/profile/**",
+            "/loadMorePosts", "/webjars/**", "/topic/**", "/post/**", "/profile/**","/forgot-password","/request-password-reset",
             "/css/**", "/js/**", "/images/**", "/webjars/**", "/test" };
 
     @Bean
