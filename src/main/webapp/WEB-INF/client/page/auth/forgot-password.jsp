@@ -42,56 +42,71 @@
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+
 <script>
-    const form = document.getElementById('resetForm');
-    const sendButton = document.getElementById('sendButton');
-    const messageDiv = document.getElementById('message');
-    const countdownDiv = document.getElementById('countdown');
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('resetForm');
+        const sendButton = document.getElementById('sendButton');
+        const messageDiv = document.getElementById('message');
+        const countdownDiv = document.getElementById('countdown');
 
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevent default form submission
+        if (form) {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Prevent default form submission
 
-        // Disable the button
-        sendButton.disabled = true;
-        let countdown = 60;
-        countdownDiv.innerText = `Please wait ${countdown} seconds before trying again.`;
+                try {
+                    // Simulate form submission using Fetch API
+                    const formData = new FormData(form);
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData
+                    });
 
-        const countdownInterval = setInterval(() => {
-            countdown -= 1;
-            if (countdown <= 0) {
-                clearInterval(countdownInterval);
-                sendButton.disabled = false;
-                countdownDiv.innerText = ''; // Clear the countdown message
-            } else {
-                countdownDiv.innerText = `Please wait ${countdown} seconds before trying again.`;
-            }
-        }, 1000);
+                    if (response.ok) {
+                        // Success: Disable the button and start the countdown
+                        sendButton.disabled = true;
+                        let countdown = 60;
+                        countdownDiv.innerText = 'Please wait ' + countdown + ' seconds before trying again.';
 
-        try {
-            // Simulate form submission using Fetch API
-            const formData = new FormData(form);
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: formData
+                        const countdownInterval = setInterval(() => {
+                            countdown -= 1;
+                            if (countdown <= 0) {
+                                clearInterval(countdownInterval);
+                                sendButton.disabled = false;
+                                countdownDiv.innerText = ''; // Clear the countdown message
+                            } else {
+                                countdownDiv.innerText = 'Please wait ' + countdown + ' seconds before trying again.';
+                            }
+                        }, 1000);
+
+                        // Display success message
+                        messageDiv.classList.add('alert-success');
+                        messageDiv.classList.remove('alert-danger');
+                        messageDiv.innerText = 'Email sent successfully! Please check your inbox.';
+                    } else {
+                        // Failure: Allow the user to try again
+                        messageDiv.classList.add('alert-danger');
+                        messageDiv.classList.remove('alert-success');
+                        messageDiv.innerText = 'Failed to send the email. Please try again later.';
+                        sendButton.disabled = false; // Re-enable the button
+                        countdownDiv.innerText = ''; // Clear countdown message if any
+                    }
+                } catch (error) {
+                    // Error: Allow the user to try again
+                    messageDiv.classList.add('alert-danger');
+                    messageDiv.classList.remove('alert-success');
+                    messageDiv.innerText = 'An error occurred while sending the email.';
+                    sendButton.disabled = false; // Re-enable the button
+                    countdownDiv.innerText = ''; // Clear countdown message if any
+                }
+
+                // Show the message
+                messageDiv.style.display = 'block';
             });
-
-            if (response.ok) {
-                messageDiv.classList.add('alert-success');
-                messageDiv.classList.remove('alert-danger');
-                messageDiv.innerText = 'Email sent successfully! Please check your inbox.';
-            } else {
-                messageDiv.classList.add('alert-danger');
-                messageDiv.classList.remove('alert-success');
-                messageDiv.innerText = 'Failed to send the email. Please try again later.';
-            }
-        } catch (error) {
-            messageDiv.classList.add('alert-danger');
-            messageDiv.classList.remove('alert-success');
-            messageDiv.innerText = 'An error occurred while sending the email.';
         }
-
-        messageDiv.style.display = 'block'; // Show the message
     });
 </script>
+
+
 </body>
 </html>

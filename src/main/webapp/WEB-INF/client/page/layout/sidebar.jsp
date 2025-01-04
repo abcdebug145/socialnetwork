@@ -37,9 +37,11 @@
     
         <!-- Notification Sidebar -->
         <div id="notificationSidebar" class="notification-sidebar">
-            <div class="p-3 bg-white shadow">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="mb-0">Notifications</h4>
+            <div class="bg-white shadow">
+                <!-- Move bg-info to encompass the whole top section -->
+                <div class="bg-primary p-3 d-flex justify-content-between align-items-center ">
+                    <i class="bi bi-bell fs-4 text-white"></i>
+                    <h4 class="mb-0 text-white">Notifications</h4>
                     <button type="button" class="btn-close" onclick="toggleNotifications(event)" aria-label="Close"></button>
                 </div>
                 <div id="noti-container">
@@ -47,6 +49,7 @@
                 </div>
             </div>
         </div>
+
     </div>
     <jsp:include page="create-post.jsp"/>
 
@@ -58,11 +61,12 @@
         top: 50%;
         transform: translateY(-50%);
         height: 80vh;
-        width: 400px;
+        width: 500px;
         background: white;
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         z-index: 1020;
         overflow-y: auto;
+        overflow-x:hidden;
         display: none;
         transition: all 0.3s ease-in-out;
     }
@@ -78,9 +82,9 @@
         transform: scale(1.05);
         transition: all 0.3s ease;
     }
-
-    #noti-btn:hover {
-        background-color: #f8f9fa;
+    /*add hover state for notification sidebar*/
+    .notification-sidebar a:hover {
+        background-color: #e9ecef;
     }
 </style>
 
@@ -139,7 +143,7 @@
     function createNotificationElement(notification) {
         const notiElement = document.createElement("a");
         notiElement.href = "/post/" + notification.post.id;
-        notiElement.classList.add("row", "align-items-center", "border", "border-info", "mb-3", "p-2");
+        notiElement.classList.add("row", "align-items-center", "border", "border-info", "p-2");
         notiElement.style.textDecoration = "none";
 
         // Highlight unread notifications
@@ -149,7 +153,7 @@
 
         // Avatar
         const avatarElement = document.createElement("div");
-        avatarElement.classList.add("col-sm-2", "text-center");
+        avatarElement.classList.add("col-sm-3", "text-center");
         const avatarImg = document.createElement("img");
         avatarImg.src = "/images/avatar/" + notification.account.avatar;
         avatarImg.alt = "avatar";
@@ -160,7 +164,7 @@
 
         // Message
         const messageElement = document.createElement("div");
-        messageElement.classList.add("col-sm-8", "text-center");
+        messageElement.classList.add("col-sm-6", "text-center");
         const boldName = document.createElement("strong");
         boldName.innerText = notification.account.username + " ";
         const message = document.createElement("span");
@@ -170,7 +174,7 @@
 
         // Time
         const timeElement = document.createElement("div");
-        timeElement.classList.add("col-sm-2", "text-end", "text-muted","mt-auto");
+        timeElement.classList.add("col-sm-3", "text-end", "text-muted","mt-auto");
         timeElement.innerText = notification.timeAgo;
 
         // Append all elements
