@@ -1,4 +1,4 @@
-package com.project.socialnetwork.service;
+package com.project.socialnetwork.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

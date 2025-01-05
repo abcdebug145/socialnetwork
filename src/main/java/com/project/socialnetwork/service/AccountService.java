@@ -3,6 +3,7 @@ package com.project.socialnetwork.service;
 import java.io.File;
 import java.util.List;
 
+import com.project.socialnetwork.utils.ImageService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

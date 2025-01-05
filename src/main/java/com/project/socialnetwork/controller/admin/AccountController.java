@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.project.socialnetwork.entity.BanRequest;
-import com.project.socialnetwork.service.BanRequestService;
+import com.project.socialnetwork.utils.BanRequestService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

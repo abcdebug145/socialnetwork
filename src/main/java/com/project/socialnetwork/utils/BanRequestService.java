@@ -1,4 +1,4 @@
-package com.project.socialnetwork.service;
+package com.project.socialnetwork.utils;
 
 import com.project.socialnetwork.entity.Account;
 import com.project.socialnetwork.entity.BanRequest;

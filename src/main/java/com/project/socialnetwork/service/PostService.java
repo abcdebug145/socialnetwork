@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.project.socialnetwork.utils.ContentDetectionService;
+import com.project.socialnetwork.utils.ImageService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

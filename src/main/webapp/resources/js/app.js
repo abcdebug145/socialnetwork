@@ -91,7 +91,7 @@ function likePost(postId, owner) {
 function submitComment(postId, comment, owner) {
     var currUsername = document.getElementById('hidden-username').value;
     if (currUsername === '') {
-        alert('Please login to like');
+        alert('Please login to comment');
         return;
     }
     event.preventDefault();
@@ -114,28 +114,6 @@ function submitComment(postId, comment, owner) {
         }
     });
 }
-
-// function createNotiElement(message) {
-//     var notiElement = document.createElement('div');
-//     notiElement.classList.add('row', 'border', 'border-info', 'mb-3');
-//
-//     var avtDiv = document.createElement('div');
-//     avtDiv.classList.add('col-sm-3');
-//
-//     var avt = document.createElement('img');
-//     avt.src = '/images/avatar/default-avatar.png';
-//     avt.width = 50;
-//
-//     var contentDiv = document.createElement('div');
-//     contentDiv.classList.add('col-sm-9');
-//     contentDiv.innerText = message;
-//
-//     avtDiv.appendChild(avt);
-//     notiElement.appendChild(avtDiv);
-//     notiElement.appendChild(contentDiv);
-//
-//     return notiElement;
-// }
 
 function showNumOfNoti(num) {
     var notiBtn = document.getElementById('noti-btn');

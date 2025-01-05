@@ -1,7 +1,7 @@
 package com.project.socialnetwork.controller.client;
 
 import com.project.socialnetwork.service.AccountService;
-import com.project.socialnetwork.service.EmailService;
+import com.project.socialnetwork.utils.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

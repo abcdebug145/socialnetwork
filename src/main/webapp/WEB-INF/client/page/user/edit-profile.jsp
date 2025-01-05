@@ -109,7 +109,7 @@
                                                 <div class="col-6">
                                                     <input type="email"
                                                         class="form-control rounded-pill border-3 border disabled"
-                                                        id="email" value="<%= session.getAttribute(" username")%>"
+                                                        id="email" value="<%= session.getAttribute("username")%>"
                                                     disabled/>
                                                 </div>
                                             </div>

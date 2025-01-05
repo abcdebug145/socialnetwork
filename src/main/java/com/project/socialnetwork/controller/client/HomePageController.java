@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.project.socialnetwork.entity.*;
 import com.project.socialnetwork.service.*;
+import com.project.socialnetwork.utils.BanRequestService;
+import com.project.socialnetwork.utils.ImageService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -187,7 +189,7 @@ public class HomePageController {
 
     @GetMapping("/page-not-found")
     public String getPage() {
-        return "client/page/auth/404";
+        return "client/page/auth/403";
     }
 
     // --------------------- API ---------------------
@@ -201,7 +203,7 @@ public class HomePageController {
         postService.likePost(post, currAccount);
         post.setLikeCount(post.getPostLikeds().size());
         postService.savePost(post);
-        if (like == true)
+        if (like)
             notificationService.createNotification(currAccount, post, "like");
 
         Map<String, Object> response = new HashMap<>();

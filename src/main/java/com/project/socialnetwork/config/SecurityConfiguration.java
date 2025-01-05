@@ -25,7 +25,7 @@ public class SecurityConfiguration {
 
     private static final String[] PERMITTED_URL = { "/", "/login", "/register", "/client/**",
             "/loadMorePosts", "/webjars/**", "/topic/**", "/post/**", "/profile/**","/forgot-password","/request-password-reset",
-            "/css/**", "/js/**", "/images/**", "/webjars/**", "/test" };
+            "/css/**", "/js/**", "/images/**", "/test", "/search" };
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -75,7 +75,7 @@ public class SecurityConfiguration {
                         .failureHandler(authenticationFailureHandler())
                         .permitAll())
                 .exceptionHandling(ex -> ex
-                        .accessDeniedPage("/page-not-found"));
+                    .accessDeniedPage("/page-not-found"));
         return http.build();
     }
 

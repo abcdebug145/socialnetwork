@@ -11,16 +11,64 @@
                 <title>Dashboard</title>
                 <link rel="stylesheet" href="/css/style.css">
             </head>
+            <style>
+                .container-fluid {
+                    padding-right: 15px;
+                    padding-left: 15px;
+                    margin-right: auto;
+                    margin-left: auto;
+                    width: 100%;
+                }
+
+                /* Add top padding to account for fixed navbar */
+                .page-body-wrapper {
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 100vh;
+                    width: 100%;
+                    padding: 0;
+                    padding-top: 70px; /* Adjust this value based on your navbar height */
+                }
+
+                .main-panel {
+                    width: 100%;
+                    margin: 0 auto;
+                    padding: 0;
+                    position: relative; /* Ensure proper stacking context */
+                }
+
+                /* Ensure content stays below navbar */
+                .content-wrapper {
+                    padding: 1.5rem;
+                    width: 100%;
+                    max-width: 100%;
+                    margin: 0 auto;
+                    position: relative;
+                    z-index: 1; /* Lower than navbar */
+                }
+
+                /* Set navbar z-index */
+                .navbar {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    z-index: 1030; /* Higher than content */
+                }
+
+                /* Ensure table header is visible */
+                .table thead th {
+                    background-color: #fff; /* Or match your design's background color */
+                    position: sticky;
+                    top: 70px; /* Should match navbar height */
+                    z-index: 2;
+                }
+            </style>
 
             <body class="with-welcome-text">
                 <div class="container-scroller">
-                    <!-- partial:partials/_navbar.html -->
                     <jsp:include page="../layout/navbar.jsp" />
-                    <!-- partial -->
                     <div class="container-fluid page-body-wrapper">
-                        <!-- partial:partials/_sidebar.html -->
-
-                        <!-- partial -->
                         <div class="main-panel">
                             <div class="content-wrapper">
                                 <div class="row">
