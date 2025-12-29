@@ -1,7 +1,7 @@
 package com.project.socialnetwork.controller.client;
 
-import com.project.socialnetwork.enums.AccountStatus;
-import com.project.socialnetwork.enums.Role;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -11,7 +11,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.socialnetwork.entity.Account;
+import com.project.socialnetwork.enums.AccountStatus;
+import com.project.socialnetwork.enums.Role;
 import com.project.socialnetwork.service.AccountService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +23,10 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final String DEFAULT_AVATAR = "default-avatar.png";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    
     private final AccountService accountService;
     private final PasswordEncoder passwordEncoder;
 
@@ -41,12 +49,12 @@ public class UserController {
     @PostMapping("/register")
     public String register(@ModelAttribute("regAccount") Account account) {
         account.setRole(Role.USER);
-        String avatar = "default-avatar.png";
-        account.setStatus(AccountStatus.ACTIVE); // active account
-        account.setAvatar(avatar);
+        account.setStatus(AccountStatus.ACTIVE);
+        account.setAvatar(DEFAULT_AVATAR);
         String password = passwordEncoder.encode(account.getPassword());
         account.setPassword(password);
         accountService.saveAccount(account);
+        logger.info("New user registered: {}", account.getEmail());
         return "redirect:/login";
     }
     @GetMapping("/forgot-password")
@@ -55,21 +63,54 @@ public class UserController {
     }
     @PostMapping("/changePassword")
     public ResponseEntity<String> changePassword(HttpServletRequest request, @RequestBody String passwordData) {
-        String password = passwordData.split(":\"")[1].split("\"")[0].split("}")[0];// {"password":"hehe"}
         HttpSession session = request.getSession();
-        String username = session.getAttribute("username").toString();
-        Account currAccount = accountService.findByEmail(username);
-        String passwordEncoded = passwordEncoder.encode(password);
-        currAccount.setPassword(passwordEncoded);
-        return ResponseEntity.ok("success");
+        Object usernameAttr = session.getAttribute("username");
+        if (usernameAttr == null) {
+            return ResponseEntity.status(401).body("User not authenticated");
+        }
+        
+        try {
+            JsonNode jsonNode = objectMapper.readTree(passwordData);
+            String password = jsonNode.get("password").asText();
+            
+            if (password == null || password.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Password cannot be empty");
+            }
+            
+            Account currAccount = accountService.findByEmail(usernameAttr.toString());
+            if (currAccount == null) {
+                return ResponseEntity.badRequest().body("Account not found");
+            }
+            
+            String passwordEncoded = passwordEncoder.encode(password);
+            currAccount.setPassword(passwordEncoded);
+            accountService.saveAccount(currAccount);
+            logger.info("Password changed for user: {}", currAccount.getEmail());
+            return ResponseEntity.ok("success");
+        } catch (Exception e) {
+            logger.error("Error changing password", e);
+            return ResponseEntity.status(500).body("Failed to change password: " + e.getMessage());
+        }
     }
 
     @GetMapping("/getAccountStatus")
     public ResponseEntity<String> getAccountStatus(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        String username = session.getAttribute("username").toString();
-        Account currAccount = accountService.findByEmail(username);
-        return ResponseEntity.ok(currAccount.getStatus().toString());
+        Object usernameAttr = session.getAttribute("username");
+        if (usernameAttr == null) {
+            return ResponseEntity.status(401).body("User not authenticated");
+        }
+        
+        try {
+            Account currAccount = accountService.findByEmail(usernameAttr.toString());
+            if (currAccount == null) {
+                return ResponseEntity.badRequest().body("Account not found");
+            }
+            return ResponseEntity.ok(currAccount.getStatus().toString());
+        } catch (Exception e) {
+            logger.error("Error getting account status", e);
+            return ResponseEntity.status(500).body("Internal server error");
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-package com.project.socialnetwork.utils;
+package com.project.socialnetwork.controller;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;

@@ -1,9 +1,7 @@
 package com.project.socialnetwork.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -12,6 +10,7 @@ import com.project.socialnetwork.entity.Account;
 import com.project.socialnetwork.entity.Notification;
 import com.project.socialnetwork.entity.Post;
 import com.project.socialnetwork.repository.NotificationRepository;
+import com.project.socialnetwork.utils.TimeUtils;
 
 import lombok.AllArgsConstructor;
 
@@ -20,13 +19,12 @@ import lombok.AllArgsConstructor;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final PostService postService;
     private final SimpMessagingTemplate messagingTemplate;
 
     public List<Notification> getAllNotifications(Account account) {
         List<Notification> notifications = notificationRepository.findNotificationsByAccount(account.getId());
         for (Notification noti : notifications) {
-            noti.setTimeAgo(calculateTimeAgo(noti.getDate()));
+            noti.setTimeAgo(TimeUtils.calculateTimeAgo(noti.getDate()));
         }
         return notifications;
     }
@@ -66,25 +64,5 @@ public class NotificationService {
         noti.setMessage(message);
         noti.setRead(false);
         notificationRepository.save(noti);
-    }
-
-    private String calculateTimeAgo(Date commentDate) {
-        long duration = new Date().getTime() - commentDate.getTime();
-
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(duration);
-
-        final int SECONDS_IN_A_MINUTE = 60;
-        final int SECONDS_IN_AN_HOUR = 60 * 60;
-        final int SECONDS_IN_A_DAY = 24 * 60 * 60;
-
-        if (seconds < SECONDS_IN_A_MINUTE) {
-            return "Just now";
-        } else if (seconds < SECONDS_IN_AN_HOUR) {
-            return seconds / SECONDS_IN_A_MINUTE + " minutes ago";
-        } else if (seconds < SECONDS_IN_A_DAY) {
-            return seconds / SECONDS_IN_AN_HOUR + " hours ago";
-        } else {
-            return seconds / SECONDS_IN_A_DAY + " days ago";
-        }
     }
 }

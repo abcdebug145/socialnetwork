@@ -1,4 +1,4 @@
-package com.project.socialnetwork.utils;
+package com.project.socialnetwork.service;
 
 import com.project.socialnetwork.entity.Account;
 import com.project.socialnetwork.entity.BanRequest;
@@ -14,6 +14,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class BanRequestService {
+    public static final int PAGE_SIZE = 20;
+
     private final BanRequestRepository banRequestRepository;
     
     public List<BanRequest> getAllBanRequests() {
@@ -25,8 +27,10 @@ public class BanRequestService {
     public BanRequest saveBanRequest(BanRequest banRequest) {
         return banRequestRepository.save(banRequest);
     }
+
     public long getTotalPages() {
-        return banRequestRepository.count() / 10;
+        long totalItems = banRequestRepository.count();
+        return (long) Math.ceil(totalItems / (double) PAGE_SIZE);
     }
     public Page<BanRequest> findAll(Pageable pageable) {
         return banRequestRepository.findAll(pageable);

@@ -3,7 +3,8 @@ package com.project.socialnetwork.service;
 import java.io.File;
 import java.util.List;
 
-import com.project.socialnetwork.utils.ImageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,10 @@ import jakarta.servlet.ServletContext;
 
 @Service
 public class AccountService {
+    public static final int PAGE_SIZE = 20;
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
+
     private final AccountRepository accountRepository;
     private final PostLikedRepository postLikedRepository;
     private final ImageService uploadService;
@@ -36,10 +41,7 @@ public class AccountService {
     }
 
     public List<Account> saveAll(List<Account> accounts) {
-        for (Account account : accounts) {
-            accountRepository.save(account);
-        }
-        return null;
+        return accountRepository.saveAll(accounts);
     }
 
     public Page<Account> findAll(Pageable pageable) {
@@ -69,7 +71,8 @@ public class AccountService {
     }
 
     public long getTotalPages() {
-        return (long) Math.ceil(accountRepository.count() / 20f);
+        long totalItems = accountRepository.count();
+        return (long) Math.ceil(totalItems / (double) PAGE_SIZE);
     }
 
     public List<PostLiked> getPostsLiked(Long accountId) {
@@ -77,13 +80,15 @@ public class AccountService {
     }
 
     public String newAvatar(String oldAvatar, MultipartFile newAvatar) {
-        if (!oldAvatar.equals("default-avatar.png")) {
+        if (!"default-avatar.png".equals(oldAvatar)) {
             String avatarPath = this.servletContext.getRealPath("/resources/images/avatar/" + oldAvatar);
             try {
                 File file = new File(avatarPath);
-                file.delete();
+                if (file.exists() && !file.delete()) {
+                    logger.warn("Failed to delete old avatar file at path: {}", avatarPath);
+                }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Error deleting old avatar file at path: {}", avatarPath, e);
             }
         }
         return uploadService.saveUploadFile(newAvatar, "avatar");

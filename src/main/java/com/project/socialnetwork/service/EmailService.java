@@ -1,4 +1,4 @@
-package com.project.socialnetwork.utils;
+package com.project.socialnetwork.service;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
